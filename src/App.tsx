@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+
+import { Default } from './pages/Default'
+import { AppContextProvider } from './contexts/AppContext'
+import { ListContextProvider } from './contexts/ListContext'
+import { SettingContextProvider } from './contexts/SettingContext'
+
+import { initFirebase } from './common/firebase'
+import './App.css'
 
 function App() {
+  initFirebase()
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <AppContextProvider>
+      <SettingContextProvider>
+        <ListContextProvider>
+          <Default />
+        </ListContextProvider>
+      </SettingContextProvider>
+    </AppContextProvider>
+  )
 }
 
-export default App;
+export default App

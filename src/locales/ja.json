@@ -1,0 +1,58 @@
+{
+  "HOME": {
+    "ENTRIES": "エントリー",
+    "GROUPS": "グループ一覧",
+    "SEARCH": "検索",
+    "SORT": "並び替え",
+    "CREATED_DATE": "作成日",
+    "UPDATE_DATE": "更新日",
+    "NO_ENTRY": "エントリーがありません"
+  },
+  "SETTING": {
+    "SETTING": "設定",
+    "GENERAL": "一般",
+    "THEME": "テーマ",
+    "LANGUAGE": "言語",
+    "JAPANESE": "日本語",
+    "ENGLISH": "English",
+    "SECURITY": "セキュリティ",
+    "AUTO_LOCK": "自動ロック",
+    "PASSWORD_EXPIRATION": "パスワード有効期限",
+    "DAYS_TO_EXPIRE": "期限切れまでの日数"
+  },
+  "DRAWER": {
+    "HOME": "ホーム",
+    "SETTING": "設定",
+    "GITHUB": "Github",
+    "ABOUT_THIS_APP": "このアプリについて"
+  },
+
+  "CREATE_ACCOUNT": "ユーザー新規登録",
+  "LOGIN": "ログイン",
+  "LOGOUT": "ログアウト",
+  "CONFIRM_LOGOUT": "ログアウトしてもよろしいですか？",
+  "LOGGED_IN": "ログインしました",
+  "LOGGED_OUT": "ログアウトしました",
+  "LOGIN_FAILED": "ログインに失敗しました",
+  "CANCEL": "キャンセル",
+
+  "SAVE": "保存",
+  "CREATE_NEW": "新規作成",
+  "ENTRY": "エントリー",
+  "GROUP": "グループ",
+  "TITLE": "タイトル",
+  "USERNAME": "ユーザー名",
+  "PASSWORD": "パスワード",
+  "NOTE": "メモ",
+  "URL": "URL",
+  "DELETE": "削除",
+  "CREATED": "作成しました",
+  "UPDATED": "更新しました",
+  "DELETED": "削除しました",
+  "COPIED": "コピーしました",
+  "CREATE_ENTRY": "エントリーの作成",
+  "ADD_ENTRY": "エントリーを追加",
+  "DELETE_ENTRY": "エントリーを削除",
+  "ADD_GROUP": "グループを追加",
+  "DELETE_GROUP": "グループを削除"
+}

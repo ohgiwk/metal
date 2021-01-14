@@ -1,0 +1,59 @@
+{
+  "HOME": {
+    "ENTRIES": "Entries",
+    "GROUPS": "Groups",
+    "SEARCH": "Search",
+    "SORT": "Sort",
+    "CREATED_DATE": "Created date",
+    "UPDATE_DATE": "Update　date",
+    "NO_ENTRY": "There is no entry"
+  },
+  "SETTING": {
+    "SETTING": "Settings",
+    "GENERAL": "一般",
+    "THEME": "Theme",
+    "LANGUAGE": "Language",
+    "JAPANESE": "日本語",
+    "ENGLISH": "English",
+    "SECURITY": "Security",
+    "AUTO_LOCK": "Auto Lock",
+    "PASSWORD_EXPIRATION": "Password Expiration",
+    "DAYS_TO_EXPIRE": "Days to Expire"
+  },
+  "DRAWER": {
+    "HOME": "Home",
+    "SETTING": "Settings",
+    "ABOUT_THIS_APP": "About This App",
+    "GITHUB": "Github"
+  },
+
+  "CREATE_ACCOUNT": "Create New Account",
+  "LOGIN": "Login",
+  "LOGOUT": "Logout",
+  "CONFIRM_LOGOUT": "ログアウトしてもよろしいですか？",
+  "LOGGED_IN": "Logged In",
+  "LOGGED_OUT": "Logged Out",
+  "LOGIN_FAILED": "Login Failed",
+  "CANCEL": "Cancel",
+
+  "SAVE": "Save",
+  "CREATE_NEW": "Create New",
+  "ENTRY": "Entry",
+  "GROUP": "Group",
+
+  "Title": "Title",
+  "USERNAME": "User Name",
+  "PASSWORD": "Password",
+  "NOTE": "Note",
+  "URL": "URL",
+  "DELETE": "Delete",
+  "CREATED": "Created",
+  "UPDATED": "Updated",
+  "DELETED": "Deleted",
+  "COPIED": "Copied",
+  "CREATE_ENTRY": "Create Entry",
+  "ADD_ENTRY": "Add Entry",
+  "DELETE_ENTRY": "Delete Entry",
+  "ADD_GROUP": "Add Group",
+  "DELETE_GROUP": "Delete Group"
+}
