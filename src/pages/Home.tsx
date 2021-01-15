@@ -4,40 +4,38 @@ import * as MUI from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
 import { makeStyles } from '@material-ui/core/styles'
 import firebase from 'firebase'
+import copy from 'copy-to-clipboard'
 
 import EntryDialog from '../components/EntryDialog'
 import GroupDialog from '../components/GroupDialog'
-import EntryListItem from '../components/EntryListItem'
+import EntryList from '../components/EntryList'
 import GroupList from '../components/GroupList'
 import FAB from '../components/FAB'
 import { Entry, Group } from '../common/Types'
 import { ListContext } from '../contexts/ListContext'
-
-const useStyles = makeStyles((theme) => ({
-  searchIcon: { margin: '18px 5px 0 0', color: 'gray' },
-  sortField: { marginTop: '14px' },
-  searchField: { width: '90%', margin: '0' },
-  createNew: { marginLeft: 'auto' },
-  noEntry: { color: 'gray', textAlign: 'center', marginTop: '2rem' },
-  nested: { paddingLeft: theme.spacing(4) },
-}))
+import { AppContext } from '../contexts/AppContext'
+import useHotkeys from '../hooks/useHotKeys'
 
 export default function Home() {
-  const classes = useStyles()
   const { t } = useTranslation()
+  // prettier-ignore
+  const { setGroups, entries, setEntries, selectedEntry, selectedGroup, } = useContext(ListContext)
+  const { setSnackBar } = useContext(AppContext)
 
-  const {
-    setGroups,
-    entries,
-    setEntries,
-    selectedEntry,
-    setSelectedEntry,
-    selectedGroup,
-  } = useContext(ListContext)
+  function copyClipBoard() {
+    if (selectedEntry) {
+      copy(selectedEntry.password)
+      setSnackBar({
+        open: true,
+        type: 'success',
+        message: `「${selectedEntry.title}」のパスワードを${t('COPIED')}`,
+      })
+    }
+  }
+  useHotkeys([{ sequence: 'command+c', handler: copyClipBoard }])
 
   const [searchText, setSearchText] = useState('')
   const [sort, setSort] = useState<keyof Entry>('createdAt')
-  // const [groupOpens, setGroupOpens] = useState<boolean[]>([])
 
   const fetchEntries = useCallback(async () => {
     const db = firebase.firestore()
@@ -51,7 +49,6 @@ export default function Home() {
 
     setGroups(groups)
     setEntries(entries)
-    // setGroupOpens(new Array(groups.length).fill(false))
   }, [setGroups, setEntries])
 
   useEffect(() => {
@@ -62,6 +59,37 @@ export default function Home() {
     .filter((e) => (selectedGroup ? e.group === selectedGroup.id : true))
     .filter((e) => e.title.includes(searchText))
     .sort((a, b) => (a?.[sort] > b[sort] ? -1 : a[sort] < b[sort] ? 1 : 0))
+
+  const props = {
+    visibleEntries,
+    searchText,
+    sort,
+    onChangeSearchField: (value: string) => setSearchText(value),
+    onChangeSortSelect: (value: string) => setSort(value as keyof Entry),
+  }
+  return <View {...props}></View>
+}
+
+const useStyles = makeStyles((theme) => ({
+  searchIcon: { margin: '18px 5px 0 0', color: 'gray' },
+  sortField: { marginTop: '14px' },
+  searchField: { width: '90%', margin: '0' },
+  createNew: { marginLeft: 'auto' },
+  noEntry: { color: 'gray', textAlign: 'center', marginTop: '2rem' },
+  nested: { paddingLeft: theme.spacing(4) },
+}))
+
+interface ViewProps {
+  visibleEntries: Entry[]
+  searchText: string
+  sort: keyof Entry
+  onChangeSearchField: (value: string) => void
+  onChangeSortSelect: (value: string) => void
+}
+
+const View: React.FC<ViewProps> = (props) => {
+  const classes = useStyles()
+  const { t } = useTranslation()
 
   return (
     <MUI.Container className="app-content">
@@ -75,17 +103,19 @@ export default function Home() {
               label={t('HOME.SEARCH')}
               margin="dense"
               className={classes.searchField}
-              value={searchText}
-              onChange={({ target: { value } }) => setSearchText(value)}
+              value={props.searchText}
+              onChange={({ target: { value } }) =>
+                props.onChangeSearchField(value)
+              }
             />
 
             <MUI.Select
               className={classes.sortField}
               label={t('HOME.SORT')}
-              value={sort}
-              onChange={({ target: { value } }) => {
-                setSort(value as keyof Entry)
-              }}
+              value={props.sort}
+              onChange={({ target: { value } }) =>
+                props.onChangeSortSelect(value as string)
+              }
             >
               <MUI.MenuItem value="createdAt">
                 {t('HOME.CREATED_DATE')}
@@ -102,32 +132,7 @@ export default function Home() {
             </MUI.Grid>
 
             <MUI.Grid item xs={12} md={9}>
-              <MUI.List
-                subheader={
-                  <MUI.ListSubheader>
-                    {t('HOME.ENTRIES')} ({visibleEntries.length})
-                  </MUI.ListSubheader>
-                }
-              >
-                {visibleEntries.map((entry, i) => (
-                  <EntryListItem
-                    key={i}
-                    entry={entry}
-                    onClick={() => {
-                      setSelectedEntry(entry)
-                    }}
-                    selected={selectedEntry?.id === entry.id}
-                  />
-                ))}
-                {visibleEntries.length === 0 && (
-                  <MUI.ListItem>
-                    <MUI.ListItemText
-                      primary={t('NO_ENTRY')}
-                      className={classes.noEntry}
-                    />
-                  </MUI.ListItem>
-                )}
-              </MUI.List>
+              <EntryList entries={props.visibleEntries} />
             </MUI.Grid>
           </MUI.Grid>
         </MUI.CardContent>
