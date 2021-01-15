@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useHistory } from 'react-router-dom'
 // prettier-ignore
@@ -8,6 +8,48 @@ import firebase from 'firebase'
 
 import { AppContext } from '../contexts/AppContext'
 
+export default function Login() {
+  const history = useHistory()
+  const { t } = useTranslation()
+
+  const { isLoading, setIsLoading, setSnackBar } = useContext(AppContext)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const props = {
+    isLoading,
+    username,
+    password,
+    onChangeUsername: (value: string) => setUsername(value),
+    onChangePassword: (value: string) => setPassword(value),
+    login: async (username: string, password: string) => {
+      setIsLoading(true)
+      try {
+        await firebase.auth().signInWithEmailAndPassword(username, password)
+
+        setSnackBar({ open: true, message: t('LOGGED_IN'), type: 'success' })
+        setIsLoading(false)
+        history.replace('/')
+      } catch (e) {
+        setIsLoading(false)
+        setSnackBar({
+          open: true,
+          message: t('LOGIN_FAILED'),
+          type: 'error',
+        })
+      }
+    },
+    onClickLoginButton: () => props.login(props.username, props.password),
+    onKeypressPassword: (e: KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        props.login(props.username, props.password)
+      }
+    },
+  }
+  return <View {...props}></View>
+}
+
 const useStyles = makeStyles(() => ({
   login: { fontFamily: "'Lora', serif" },
   content: { textAlign: 'center' },
@@ -16,33 +58,20 @@ const useStyles = makeStyles(() => ({
   or: { fontSize: '14px', color: 'gray', marginTop: '1rem' },
 }))
 
-export default function Login() {
+interface ViewProps {
+  isLoading: boolean
+  username: string
+  onChangeUsername: (value: string) => void
+  password: string
+  onChangePassword: (value: string) => void
+  login: Function
+  onClickLoginButton: () => void
+  onKeypressPassword: (event: KeyboardEvent<HTMLDivElement>) => void
+}
+
+const View: React.FC<ViewProps> = (props) => {
   const classes = useStyles()
-  const history = useHistory()
   const { t } = useTranslation()
-
-  const { isLoading, setIsLoading, setSnackBar } = useContext(AppContext)
-
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  async function login(username: string, password: string) {
-    setIsLoading(true)
-    try {
-      await firebase.auth().signInWithEmailAndPassword(username, password)
-
-      setSnackBar({ open: true, message: t('LOGGED_IN'), type: 'success' })
-      setIsLoading(false)
-      history.replace('/')
-    } catch (e) {
-      setIsLoading(false)
-      setSnackBar({
-        open: true,
-        message: t('LOGIN_FAILED'),
-        type: 'error',
-      })
-    }
-  }
 
   return (
     <Container className="app-content">
@@ -54,30 +83,29 @@ export default function Login() {
               label={t('USERNAME')}
               variant="outlined"
               className={classes.textField}
-              value={username}
-              onChange={({ target: { value } }) => setUsername(value)}
+              value={props.username}
+              onChange={({ target: { value } }) =>
+                props.onChangeUsername(value)
+              }
             />
             <TextField
               label={t('PASSWORD')}
               variant="outlined"
               type="password"
               className={classes.textField}
-              value={password}
-              onChange={({ target: { value } }) => setPassword(value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  login(username, password)
-                }
-              }}
+              value={props.password}
+              onChange={({ target: { value } }) =>
+                props.onChangePassword(value)
+              }
+              onKeyPress={props.onKeypressPassword}
             />
           </form>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => login(username, password)}
+            onClick={props.onClickLoginButton}
             className={classes.button}
-            disabled={isLoading}
+            disabled={props.isLoading}
           >
             {t('LOGIN')}
           </Button>
