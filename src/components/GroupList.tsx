@@ -57,6 +57,7 @@ const GroupList: React.FC<{}> = () => {
             {selectedGroup?.id === group.id && (
               <ListItemSecondaryAction>
                 <OptionMenu
+                  iconSize="small"
                   items={[
                     {
                       label: 'Delete Group',

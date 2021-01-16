@@ -9,6 +9,7 @@ const useStyles = makeStyles(() => ({
 }))
 
 const OptionMenu: React.FC<{
+  iconSize?: 'small' | 'medium'
   items: { label: string; Icon: ReactNode; onClick: () => void }[]
 }> = (props) => {
   const classes = useStyles()
@@ -22,7 +23,7 @@ const OptionMenu: React.FC<{
 
   return (
     <>
-      <IconButton onClick={handleClick} size="small">
+      <IconButton onClick={handleClick} size={props.iconSize}>
         <MoreHorizIcon />
       </IconButton>
 

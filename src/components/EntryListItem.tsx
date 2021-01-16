@@ -1,15 +1,10 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 // prettier-ignore
-import {
-  IconButton, ListItem, ListItemIcon, ListItemText,
-  ListItemSecondaryAction, Menu, MenuItem, Typography
-} from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import { IconButton, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction } from '@material-ui/core'
 import KeyIcon from '@material-ui/icons/VpnKey'
 import DeleteIcon from '@material-ui/icons/Delete'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import firebase from 'firebase'
 
@@ -17,10 +12,7 @@ import { Entry } from '../common/Types'
 import { AppContext } from '../contexts/AppContext'
 import { ListContext } from '../contexts/ListContext'
 import useClipboard from '../hooks/useClipboard'
-
-const useStyles = makeStyles(() => ({
-  menuItemIcon: { minWidth: '30px' },
-}))
+import OptionMenu from './OptionMenu'
 
 const EntryListItem: React.FC<{
   entry: Entry
@@ -28,7 +20,6 @@ const EntryListItem: React.FC<{
   selected?: boolean
   onClick?: () => void
 }> = (props) => {
-  const classes = useStyles()
   const { t } = useTranslation()
   const { copyPassword } = useClipboard()
   const { setSnackBar, setIsLoading, setConfirmDialog } = useContext(AppContext)
@@ -42,7 +33,6 @@ const EntryListItem: React.FC<{
   }
 
   function onClickDeleteEntry() {
-    handleClose()
     const dialogText = {
       title: 'エントリーの削除',
       text: `エントリー「${props.entry.title}」を削除してもよろしいですか？`,
@@ -78,13 +68,6 @@ const EntryListItem: React.FC<{
     setConfirmDialog({ open: false })
   }
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) =>
-    setAnchorEl(event.currentTarget)
-
-  const handleClose = () => setAnchorEl(null)
-
   return (
     <ListItem
       button
@@ -102,33 +85,20 @@ const EntryListItem: React.FC<{
           <AssignmentIcon />
         </IconButton>
 
-        <IconButton onClick={handleClick}>
-          <MoreHorizIcon />
-        </IconButton>
-
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon className={classes.menuItemIcon}>
-              <FileCopyIcon fontSize="small" />
-            </ListItemIcon>
-            <Typography variant="inherit" noWrap>
-              Clone Entry
-            </Typography>
-          </MenuItem>
-
-          <MenuItem onClick={onClickDeleteEntry}>
-            <ListItemIcon className={classes.menuItemIcon}>
-              <DeleteIcon fontSize="small" />
-            </ListItemIcon>
-            <Typography variant="inherit" noWrap>
-              Delete Entry
-            </Typography>
-          </MenuItem>
-        </Menu>
+        <OptionMenu
+          items={[
+            {
+              label: 'Clone Entry',
+              Icon: <FileCopyIcon fontSize="small" />,
+              onClick: () => {},
+            },
+            {
+              label: 'Delete Entry',
+              Icon: <DeleteIcon fontSize="small" />,
+              onClick: onClickDeleteEntry,
+            },
+          ]}
+        />
       </ListItemSecondaryAction>
     </ListItem>
   )
