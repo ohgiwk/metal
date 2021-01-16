@@ -23,7 +23,8 @@ export default function Home() {
   useEffect(() => {
     fetchEntries()
     fetchGroups()
-  }, [fetchEntries, fetchGroups])
+    // 無限ループになるので、空配列のままで
+  }, [])
 
   const [searchText, setSearchText] = useState('')
   const [sort, setSort] = useState<keyof Entry>('createdAt')
