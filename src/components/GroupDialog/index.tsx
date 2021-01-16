@@ -4,8 +4,8 @@ import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import firebase from 'firebase'
 
-import { AppContext } from '../contexts/AppContext'
-import { ListContext } from '../contexts/ListContext'
+import { AppContext } from '../../contexts/AppContext'
+import { ListContext } from '../../contexts/ListContext'
 
 const useStyles = makeStyles(() => ({
   dialogTitle: { paddingBottom: '0' },

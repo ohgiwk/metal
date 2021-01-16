@@ -12,8 +12,8 @@ import FolderIcon from '@material-ui/icons/Folder'
 import DeleteIcon from '@material-ui/icons/Delete'
 import FolderSpecialIcon from '@material-ui/icons/FolderSpecial'
 
-import OptionMenu from './OptionMenu'
-import { ListContext } from '../contexts/ListContext'
+import OptionMenu from '../OptionMenu'
+import { ListContext } from '../../contexts/ListContext'
 
 const GroupList: React.FC<{}> = () => {
   const { t } = useTranslation()

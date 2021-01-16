@@ -8,11 +8,11 @@ import FileCopyIcon from '@material-ui/icons/FileCopy'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import firebase from 'firebase'
 
-import { Entry } from '../common/Types'
-import { AppContext } from '../contexts/AppContext'
-import { ListContext } from '../contexts/ListContext'
-import useClipboard from '../hooks/useClipboard'
-import OptionMenu from './OptionMenu'
+import { Entry } from '../../common/Types'
+import { AppContext } from '../../contexts/AppContext'
+import { ListContext } from '../../contexts/ListContext'
+import useClipboard from '../../hooks/useClipboard'
+import OptionMenu from '../OptionMenu'
 
 const EntryListItem: React.FC<{
   entry: Entry

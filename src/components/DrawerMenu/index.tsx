@@ -8,7 +8,7 @@ import HomeIcon from '@material-ui/icons/Home'
 import SettingsIcon from '@material-ui/icons/Settings'
 import GithubIcon from '@material-ui/icons/GitHub'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
-import { AppContext } from '../contexts/AppContext'
+import { AppContext } from '../../contexts/AppContext'
 
 const useStyles = makeStyles({
   list: { width: 250, height: '100%' },
@@ -86,7 +86,12 @@ export default function DrawerMenu(props: Props) {
               </ListItem>
             )}
 
-            <ListItem button>
+            <ListItem
+              button
+              component="a"
+              target="new"
+              href="https://github.com/ohgiwk/metal"
+            >
               <ListItemIcon>
                 <GithubIcon />
               </ListItemIcon>

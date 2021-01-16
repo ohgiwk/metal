@@ -6,9 +6,9 @@ import firebase from 'firebase'
 import moment from 'moment'
 import CryptoJS from 'crypto-js'
 
-import PasswordInput from './PasswordInput'
-import { AppContext } from '../contexts/AppContext'
-import { ListContext } from '../contexts/ListContext'
+import PasswordInput from '../PasswordInput'
+import { AppContext } from '../../contexts/AppContext'
+import { ListContext } from '../../contexts/ListContext'
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: { paddingBottom: '0' },

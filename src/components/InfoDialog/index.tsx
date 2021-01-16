@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 // prettier-ignore
 import { Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { AppContext } from '../contexts/AppContext'
+import { AppContext } from '../../contexts/AppContext'
 
 const useStyles = makeStyles(() => ({
   dialog: { fontFamily: "'Lora', serif" },

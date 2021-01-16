@@ -4,7 +4,7 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab'
 import AddIcon from '@material-ui/icons/Add'
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder'
 import { makeStyles } from '@material-ui/core/styles'
-import { ListContext } from '../contexts/ListContext'
+import { ListContext } from '../../contexts/ListContext'
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -27,6 +27,15 @@ export default function FAB() {
   } = useContext(ListContext)
   const [fab, setFab] = useState(false)
 
+  const addEntry = () => {
+    setSelectedEntry(undefined)
+    setEntryDialog(true)
+  }
+  const addGroup = () => {
+    setSelectedGroup(undefined)
+    setGroupDialog(true)
+  }
+
   return (
     <SpeedDial
       ariaLabel="SpeedDial"
@@ -42,19 +51,13 @@ export default function FAB() {
         color="primary"
         icon={<AddIcon />}
         tooltipTitle={t('ADD_ENTRY')}
-        onClick={() => {
-          setSelectedEntry(undefined)
-          setEntryDialog(true)
-        }}
+        onClick={addEntry}
       />
       <SpeedDialAction
         key="Add Group"
         icon={<CreateNewFolderIcon />}
         tooltipTitle={t('ADD_GROUP')}
-        onClick={() => {
-          setSelectedGroup(undefined)
-          setGroupDialog(true)
-        }}
+        onClick={addGroup}
       />
     </SpeedDial>
   )

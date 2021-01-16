@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { List, ListItem, ListItemText, ListSubheader } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { Entry } from '../common/Types'
-import EntryListItem from '../components/EntryListItem'
-import { ListContext } from '../contexts/ListContext'
+import { Entry } from '../../common/Types'
+import EntryListItem from '../EntryListItem'
+import { ListContext } from '../../contexts/ListContext'
 
 const useStyles = makeStyles(() => ({
   noEntry: { color: 'gray', textAlign: 'center', marginTop: '2rem' },

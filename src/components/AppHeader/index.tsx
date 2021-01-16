@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import firebase from 'firebase'
 
-import { AppContext } from '../contexts/AppContext'
+import { AppContext } from '../../contexts/AppContext'
 
 const useStyles = makeStyles(() => ({
   appBar: {},
