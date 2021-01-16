@@ -1,17 +1,15 @@
 import React, { useContext } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 // prettier-ignore
 import { AppBar, Button, IconButton, Toolbar, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
-import firebase from 'firebase'
 
 import { AppContext } from '../../contexts/AppContext'
+import useAuth from '../../hooks/useAuth'
 
 const useStyles = makeStyles(() => ({
-  appBar: {},
-  button: {},
   title: {
     marginLeft: 'calc(50% - 86px)',
     fontFamily: "'Lora', serif",
@@ -24,17 +22,9 @@ const AppHeader: React.FC<{
   openDrawer: Function
 }> = (props) => {
   const classes = useStyles()
-  const history = useHistory()
   const { t } = useTranslation()
-
-  const { isAuth, setSnackBar, setConfirmDialog } = useContext(AppContext)
-
-  function logout() {
-    firebase.auth().signOut()
-    setSnackBar({ open: true, message: t('LOGGED_OUT'), type: 'success' })
-    history.replace('/login')
-    handleClose()
-  }
+  const { isAuth, setConfirmDialog } = useContext(AppContext)
+  const { logout } = useAuth()
 
   const dialogText = {
     title: t('LOGOUT'),
@@ -43,25 +33,24 @@ const AppHeader: React.FC<{
     secondaryButtonText: t('CANCEL'),
   }
 
-  const handleClose = () => {
-    setConfirmDialog({ ...dialogText, open: false })
-  }
+  const handleClose = () => setConfirmDialog({ ...dialogText, open: false })
+
   const confirmLogout = () => {
     setConfirmDialog({
       open: true,
       ...dialogText,
-      onClickPrimaryButton: logout,
+      onClickPrimaryButton: () => {
+        logout()
+        handleClose()
+      },
       onClickSecondaryButton: handleClose,
     })
   }
 
   return (
-    <AppBar elevation={0} color="inherit" className={classes.appBar}>
+    <AppBar elevation={0} color="inherit">
       <Toolbar>
-        <IconButton
-          onClick={() => props.openDrawer(true)}
-          className={classes.button}
-        >
+        <IconButton onClick={() => props.openDrawer(true)}>
           <MenuIcon />
         </IconButton>
         <Typography variant="h1" className={classes.title}>

@@ -1,18 +1,16 @@
 import React, { useState, useContext, KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 // prettier-ignore
 import { Button, Card, CardContent, Container, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import firebase from 'firebase'
 
 import { AppContext } from '../contexts/AppContext'
+import useAuth from '../hooks/useAuth'
 
 export default function Login() {
-  const history = useHistory()
-  const { t } = useTranslation()
-
-  const { isLoading, setIsLoading, setSnackBar } = useContext(AppContext)
+  const { login } = useAuth()
+  const { isLoading } = useContext(AppContext)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -22,28 +20,12 @@ export default function Login() {
     password,
     onChangeUsername: (value: string) => setUsername(value),
     onChangePassword: (value: string) => setPassword(value),
-    login: async (username: string, password: string) => {
-      setIsLoading(true)
-      try {
-        await firebase.auth().signInWithEmailAndPassword(username, password)
-
-        setSnackBar({ open: true, message: t('LOGGED_IN'), type: 'success' })
-        setIsLoading(false)
-        history.replace('/')
-      } catch (e) {
-        setIsLoading(false)
-        setSnackBar({
-          open: true,
-          message: t('LOGIN_FAILED'),
-          type: 'error',
-        })
-      }
-    },
+    login,
     onClickLoginButton: () => props.login(props.username, props.password),
     onKeypressPassword: (e: KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
         e.preventDefault()
-        props.login(props.username, props.password)
+        login(username, password)
       }
     },
   }
