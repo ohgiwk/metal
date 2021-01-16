@@ -67,8 +67,8 @@ describe('PasswordInput', () => {
 
     // クリック前、確認
     expect(wrapper.find('input').props().type).toEqual('password')
-    expect(wrapper.find(Visibility).exists()).toBeFalsy()
-    expect(wrapper.find(VisibilityOff).exists()).toBeTruthy()
+    expect(wrapper.exists(Visibility)).toBeFalsy()
+    expect(wrapper.exists(VisibilityOff)).toBeTruthy()
 
     // clickイベント実行
     wrapper.find(IconButton).simulate('click')
@@ -76,7 +76,7 @@ describe('PasswordInput', () => {
     // クリック後、確認
 
     expect(wrapper.find('input').props().type).toEqual('text')
-    expect(wrapper.find(Visibility).exists()).toBeTruthy()
-    expect(wrapper.find(VisibilityOff).exists()).toBeFalsy()
+    expect(wrapper.exists(Visibility)).toBeTruthy()
+    expect(wrapper.exists(VisibilityOff)).toBeFalsy()
   })
 })
