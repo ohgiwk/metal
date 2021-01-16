@@ -11,12 +11,12 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 import AssignmentIcon from '@material-ui/icons/Assignment'
-import copy from 'copy-to-clipboard'
 import firebase from 'firebase'
 
 import { Entry } from '../common/Types'
 import { AppContext } from '../contexts/AppContext'
 import { ListContext } from '../contexts/ListContext'
+import useClipboard from '../hooks/useClipboard'
 
 const useStyles = makeStyles(() => ({
   menuItemIcon: { minWidth: '30px' },
@@ -30,15 +30,11 @@ const EntryListItem: React.FC<{
 }> = (props) => {
   const classes = useStyles()
   const { t } = useTranslation()
+  const { copyPassword } = useClipboard()
   const { setSnackBar, setIsLoading, setConfirmDialog } = useContext(AppContext)
   const { entries, setEntries, setSelectedEntry, setEntryDialog } = useContext(
     ListContext
   )
-
-  function copyClipBoard() {
-    copy(props.entry.password)
-    setSnackBar({ open: true, type: 'success', message: t('COPIED') })
-  }
 
   function editEntry() {
     setSelectedEntry(props.entry)
@@ -102,7 +98,7 @@ const EntryListItem: React.FC<{
       </ListItemIcon>
       <ListItemText primary={props.entry.title} />
       <ListItemSecondaryAction>
-        <IconButton onClick={copyClipBoard}>
+        <IconButton onClick={() => copyPassword(props.entry)}>
           <AssignmentIcon />
         </IconButton>
 

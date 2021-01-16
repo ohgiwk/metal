@@ -4,7 +4,6 @@ import * as MUI from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
 import { makeStyles } from '@material-ui/core/styles'
 import firebase from 'firebase'
-import copy from 'copy-to-clipboard'
 
 import EntryDialog from '../components/EntryDialog'
 import GroupDialog from '../components/GroupDialog'
@@ -13,26 +12,20 @@ import GroupList from '../components/GroupList'
 import FAB from '../components/FAB'
 import { Entry, Group } from '../common/Types'
 import { ListContext } from '../contexts/ListContext'
-import { AppContext } from '../contexts/AppContext'
 import useHotkeys from '../hooks/useHotKeys'
+import useClipboard from '../hooks/useClipboard'
 
 export default function Home() {
-  const { t } = useTranslation()
   // prettier-ignore
   const { setGroups, entries, setEntries, selectedEntry, selectedGroup, } = useContext(ListContext)
-  const { setSnackBar } = useContext(AppContext)
 
-  function copyClipBoard() {
-    if (selectedEntry) {
-      copy(selectedEntry.password)
-      setSnackBar({
-        open: true,
-        type: 'success',
-        message: `「${selectedEntry.title}」のパスワードを${t('COPIED')}`,
-      })
-    }
-  }
-  useHotkeys([{ sequence: 'command+c', handler: copyClipBoard }])
+  const { copyPassword } = useClipboard()
+  useHotkeys([
+    {
+      sequence: 'command+c',
+      handler: () => selectedEntry && copyPassword(selectedEntry),
+    },
+  ])
 
   const [searchText, setSearchText] = useState('')
   const [sort, setSort] = useState<keyof Entry>('createdAt')
