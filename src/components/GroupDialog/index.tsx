@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
 const GroupDialog: React.FC<{}> = () => {
   const classes = useStyles()
   const { t } = useTranslation()
-  const { setIsLoading, setSnackBar } = useContext(AppContext)
+  const { currentUser, setIsLoading, setSnackBar } = useContext(AppContext)
   // prettier-ignore
   const { groups, setGroups, selectedGroup, groupDialog: open, setGroupDialog: setOpen } = useContext(ListContext)
   const [name, setName] = useState('')
@@ -38,7 +38,7 @@ const GroupDialog: React.FC<{}> = () => {
     }
 
     const db = firebase.firestore()
-    let doc = db.collection('passwords').doc(firebase.auth().currentUser?.uid)
+    let doc = db.collection('passwords').doc(currentUser?.uid)
 
     if (!(await doc.get()).exists) {
       await doc.set({})
@@ -66,7 +66,7 @@ const GroupDialog: React.FC<{}> = () => {
       await firebase
         .firestore()
         .collection('passwords')
-        .doc(firebase.auth().currentUser?.uid)
+        .doc(currentUser?.uid)
         .collection('groups')
         .doc(targetGroup?.id)
         .update(targetGroup)

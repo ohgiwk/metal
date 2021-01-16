@@ -22,7 +22,12 @@ const EntryListItem: React.FC<{
 }> = (props) => {
   const { t } = useTranslation()
   const { copyPassword } = useClipboard()
-  const { setSnackBar, setIsLoading, setConfirmDialog } = useContext(AppContext)
+  const {
+    currentUser,
+    setSnackBar,
+    setIsLoading,
+    setConfirmDialog,
+  } = useContext(AppContext)
   const { entries, setEntries, setSelectedEntry, setEntryDialog } = useContext(
     ListContext
   )
@@ -53,7 +58,6 @@ const EntryListItem: React.FC<{
     if (!entry) return
 
     setIsLoading(true)
-    const { currentUser } = firebase.auth()
     await firebase
       .firestore()
       .collection('passwords')

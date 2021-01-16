@@ -38,7 +38,7 @@ export default function EntryDialog() {
 
   const masterPassword = 'master'
 
-  const { setIsLoading, setSnackBar } = useContext(AppContext)
+  const { currentUser, setIsLoading, setSnackBar } = useContext(AppContext)
   const { entries, setEntries, groups, selectedEntry } = useContext(ListContext)
   const { entryDialog: open, setEntryDialog: setOpen } = useContext(ListContext)
 
@@ -91,7 +91,7 @@ export default function EntryDialog() {
     // TODO: 暗号化
 
     const db = firebase.firestore()
-    let doc = db.collection('passwords').doc(firebase.auth().currentUser?.uid)
+    let doc = db.collection('passwords').doc(currentUser?.uid)
 
     if (!(await doc.get()).exists) {
       await doc.set({})
@@ -125,7 +125,7 @@ export default function EntryDialog() {
       await firebase
         .firestore()
         .collection('passwords')
-        .doc(firebase.auth().currentUser?.uid)
+        .doc(currentUser?.uid)
         .collection('entries')
         .doc(targetEntry?.id)
         .update(targetEntry)

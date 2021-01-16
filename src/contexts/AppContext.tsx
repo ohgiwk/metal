@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react'
+import firebase from 'firebase'
 
 type SnackBarState = {
   open: boolean
@@ -23,6 +24,10 @@ interface State {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isAuth: boolean
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>
+  currentUser: firebase.User | undefined
+  setCurrentUser: React.Dispatch<
+    React.SetStateAction<firebase.User | undefined>
+  >
   snackBar: SnackBarState
   setSnackBar: React.Dispatch<React.SetStateAction<SnackBarState>>
   confirmDialog: ConfirmDialogState
@@ -37,6 +42,7 @@ function AppContextProvider(props: { children?: React.ReactNode }) {
   const [isAppLoading, setIsAppLoading] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [isAuth, setIsAuth] = useState(false)
+  const [currentUser, setCurrentUser] = useState<firebase.User | undefined>()
   const [snackBar, setSnackBar] = useState({ open: false })
   const [confirmDialog, setConfirmDialog] = useState({ open: false })
   const [infoDialog, setInfoDialog] = useState(false)
@@ -50,6 +56,8 @@ function AppContextProvider(props: { children?: React.ReactNode }) {
         setIsLoading,
         isAuth,
         setIsAuth,
+        currentUser,
+        setCurrentUser,
         snackBar,
         setSnackBar,
         confirmDialog,

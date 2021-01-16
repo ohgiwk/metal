@@ -11,6 +11,7 @@ import EntryList from '../components/EntryList'
 import GroupList from '../components/GroupList'
 import FAB from '../components/FAB'
 import { Entry, Group } from '../common/Types'
+import { AppContext } from '../contexts/AppContext'
 import { ListContext } from '../contexts/ListContext'
 import useHotkeys from '../hooks/useHotKeys'
 import useClipboard from '../hooks/useClipboard'
@@ -18,7 +19,7 @@ import useClipboard from '../hooks/useClipboard'
 export default function Home() {
   // prettier-ignore
   const { setGroups, entries, setEntries, selectedEntry, selectedGroup, } = useContext(ListContext)
-
+  const { currentUser } = useContext(AppContext)
   const { copyPassword } = useClipboard()
   useHotkeys([
     {
@@ -32,7 +33,6 @@ export default function Home() {
 
   const fetchEntries = useCallback(async () => {
     const db = firebase.firestore()
-    const { currentUser } = firebase.auth()
     const doc = db.collection('passwords').doc(currentUser?.uid)
     const { docs: _entries } = await doc.collection('entries').get()
     const { docs: _groups } = await doc.collection('groups').get()
@@ -42,7 +42,7 @@ export default function Home() {
 
     setGroups(groups)
     setEntries(entries)
-  }, [setGroups, setEntries])
+  }, [currentUser, setGroups, setEntries])
 
   useEffect(() => {
     fetchEntries()

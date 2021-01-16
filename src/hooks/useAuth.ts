@@ -7,7 +7,21 @@ import { AppContext } from '../contexts/AppContext'
 const useAuth = () => {
   const history = useHistory()
   const { t } = useTranslation()
-  const { setSnackBar, setIsLoading } = useContext(AppContext)
+  const {
+    setIsAuth,
+    setCurrentUser,
+    setIsAppLoading,
+    setSnackBar,
+    setIsLoading,
+  } = useContext(AppContext)
+
+  function initAuth() {
+    firebase.auth().onAuthStateChanged((user) => {
+      setIsAuth(!!user)
+      setCurrentUser(user ?? undefined)
+      setIsAppLoading(false)
+    })
+  }
 
   async function login(username: string, password: string) {
     setIsLoading(true)
@@ -34,6 +48,6 @@ const useAuth = () => {
     history.replace('/login')
   }
 
-  return { login, logout }
+  return { initAuth, login, logout }
 }
 export default useAuth
