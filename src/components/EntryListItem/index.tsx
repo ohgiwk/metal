@@ -6,13 +6,13 @@ import KeyIcon from '@material-ui/icons/VpnKey'
 import DeleteIcon from '@material-ui/icons/Delete'
 import FileCopyIcon from '@material-ui/icons/FileCopy'
 import AssignmentIcon from '@material-ui/icons/Assignment'
-import firebase from 'firebase'
 
 import { Entry } from '../../common/Types'
 import { AppContext } from '../../contexts/AppContext'
 import { ListContext } from '../../contexts/ListContext'
 import useClipboard from '../../hooks/useClipboard'
 import OptionMenu from '../OptionMenu'
+import useAPI from '../../hooks/useAPI'
 
 const EntryListItem: React.FC<{
   entry: Entry
@@ -22,15 +22,9 @@ const EntryListItem: React.FC<{
 }> = (props) => {
   const { t } = useTranslation()
   const { copyPassword } = useClipboard()
-  const {
-    currentUser,
-    setSnackBar,
-    setIsLoading,
-    setConfirmDialog,
-  } = useContext(AppContext)
-  const { entries, setEntries, setSelectedEntry, setEntryDialog } = useContext(
-    ListContext
-  )
+  const { setConfirmDialog } = useContext(AppContext)
+  const { setSelectedEntry, setEntryDialog } = useContext(ListContext)
+  const { deleteEntry } = useAPI()
 
   function editEntry() {
     setSelectedEntry(props.entry)
@@ -48,28 +42,13 @@ const EntryListItem: React.FC<{
     setConfirmDialog({
       open: true,
       ...dialogText,
-      onClickPrimaryButton: () => deleteEntry(props.entry),
+      onClickPrimaryButton: () => {
+        deleteEntry(props.entry)
+        setConfirmDialog({ open: false })
+      },
       onClickSecondaryButton: () =>
         setConfirmDialog({ ...dialogText, open: false }),
     })
-  }
-
-  async function deleteEntry(entry?: Entry) {
-    if (!entry) return
-
-    setIsLoading(true)
-    await firebase
-      .firestore()
-      .collection('passwords')
-      .doc(currentUser?.uid)
-      .collection('entries')
-      .doc(entry.id)
-      .delete()
-
-    setIsLoading(false)
-    setEntries([...entries.filter((e) => e.id !== entry.id)])
-    setSnackBar({ open: true, type: 'success', message: t('DELETED') })
-    setConfirmDialog({ open: false })
   }
 
   return (

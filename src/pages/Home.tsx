@@ -1,57 +1,44 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
 import { makeStyles } from '@material-ui/core/styles'
-import firebase from 'firebase'
 
 import EntryDialog from '../components/EntryDialog'
 import GroupDialog from '../components/GroupDialog'
 import EntryList from '../components/EntryList'
 import GroupList from '../components/GroupList'
 import FAB from '../components/FAB'
-import { Entry, Group } from '../common/Types'
-import { AppContext } from '../contexts/AppContext'
+import { Entry } from '../common/Types'
 import { ListContext } from '../contexts/ListContext'
 import useHotkeys from '../hooks/useHotKeys'
 import useClipboard from '../hooks/useClipboard'
+import useAPI from '../hooks/useAPI'
 
 export default function Home() {
-  // prettier-ignore
-  const { setGroups, entries, setEntries, selectedEntry, selectedGroup, } = useContext(ListContext)
-  const { currentUser } = useContext(AppContext)
+  const { entries, selectedEntry, selectedGroup } = useContext(ListContext)
   const { copyPassword } = useClipboard()
+  const { fetchEntries, fetchGroups } = useAPI()
+
+  useEffect(() => {
+    fetchEntries()
+    fetchGroups()
+  }, [fetchEntries, fetchGroups])
+
+  const [searchText, setSearchText] = useState('')
+  const [sort, setSort] = useState<keyof Entry>('createdAt')
+
+  const visibleEntries = entries
+    .filter((e) => (selectedGroup ? e.group === selectedGroup.id : true))
+    .filter((e) => e.title.includes(searchText))
+    .sort((a, b) => (a?.[sort] > b[sort] ? -1 : a[sort] < b[sort] ? 1 : 0))
+
   useHotkeys([
     {
       sequence: 'command+c',
       handler: () => selectedEntry && copyPassword(selectedEntry),
     },
   ])
-
-  const [searchText, setSearchText] = useState('')
-  const [sort, setSort] = useState<keyof Entry>('createdAt')
-
-  const fetchEntries = useCallback(async () => {
-    const db = firebase.firestore()
-    const doc = db.collection('passwords').doc(currentUser?.uid)
-    const { docs: _entries } = await doc.collection('entries').get()
-    const { docs: _groups } = await doc.collection('groups').get()
-
-    const entries = _entries.map((d) => ({ id: d.id, ...d.data() } as Entry))
-    const groups = _groups.map((d) => ({ id: d.id, ...d.data() } as Group))
-
-    setGroups(groups)
-    setEntries(entries)
-  }, [currentUser, setGroups, setEntries])
-
-  useEffect(() => {
-    fetchEntries()
-  }, [fetchEntries])
-
-  const visibleEntries = entries
-    .filter((e) => (selectedGroup ? e.group === selectedGroup.id : true))
-    .filter((e) => e.title.includes(searchText))
-    .sort((a, b) => (a?.[sort] > b[sort] ? -1 : a[sort] < b[sort] ? 1 : 0))
 
   const props = {
     visibleEntries,

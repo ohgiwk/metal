@@ -2,10 +2,9 @@ import React, { useState, useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import firebase from 'firebase'
 
-import { AppContext } from '../../contexts/AppContext'
 import { ListContext } from '../../contexts/ListContext'
+import useAPI from '../../hooks/useAPI'
 
 const useStyles = makeStyles(() => ({
   dialogTitle: { paddingBottom: '0' },
@@ -15,69 +14,25 @@ const useStyles = makeStyles(() => ({
 const GroupDialog: React.FC<{}> = () => {
   const classes = useStyles()
   const { t } = useTranslation()
-  const { currentUser, setIsLoading, setSnackBar } = useContext(AppContext)
+
   // prettier-ignore
-  const { groups, setGroups, selectedGroup, groupDialog: open, setGroupDialog: setOpen } = useContext(ListContext)
+  const { selectedGroup, groupDialog: open, setGroupDialog: setOpen } = useContext(ListContext)
   const [name, setName] = useState('')
+  const { createGroup, updateGroup } = useAPI()
 
   useEffect(() => {
     setName(selectedGroup?.name ?? '')
   }, [selectedGroup])
 
-  /**
-   *
-   */
-  async function createGroup() {
-    setIsLoading(true)
-
-    const now = new Date().getTime()
-    const group = {
-      name,
-      createdAt: now,
-      updatedAt: now,
-    }
-
-    const db = firebase.firestore()
-    let doc = db.collection('passwords').doc(currentUser?.uid)
-
-    if (!(await doc.get()).exists) {
-      await doc.set({})
-    }
-
-    doc = await doc.collection('groups').add(group)
-
+  const create = () => {
+    createGroup(name)
     setName('')
     setOpen(false)
-    setIsLoading(false)
-
-    setGroups([...groups, { id: doc.id, ...group }])
-    setSnackBar({ open: true, type: 'success', message: t('CREATED') })
   }
-
-  /**
-   *
-   */
-  async function updateGroup() {
-    setIsLoading(true)
-
+  const update = () => {
     if (selectedGroup) {
-      const targetGroup = { ...selectedGroup, name }
-
-      await firebase
-        .firestore()
-        .collection('passwords')
-        .doc(currentUser?.uid)
-        .collection('groups')
-        .doc(targetGroup?.id)
-        .update(targetGroup)
-
+      updateGroup(selectedGroup, name)
       setOpen(false)
-      setIsLoading(false)
-
-      setGroups([
-        ...groups.map((e) => (e.id === targetGroup?.id ? targetGroup : e)),
-      ])
-      setSnackBar({ open: true, type: 'success', message: t('UPDATED') })
     }
   }
 
@@ -102,7 +57,7 @@ const GroupDialog: React.FC<{}> = () => {
           {t('CANCEL')}
         </MUI.Button>
         <MUI.Button
-          onClick={selectedGroup ? updateGroup : createGroup}
+          onClick={selectedGroup ? update : create}
           color="primary"
           variant="contained"
           disabled={name.length === 0}

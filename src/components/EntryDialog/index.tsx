@@ -2,13 +2,11 @@ import React, { useEffect, useState, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import firebase from 'firebase'
 import moment from 'moment'
-import CryptoJS from 'crypto-js'
 
 import PasswordInput from '../PasswordInput'
-import { AppContext } from '../../contexts/AppContext'
 import { ListContext } from '../../contexts/ListContext'
+import useAPI from '../../hooks/useAPI'
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: { paddingBottom: '0' },
@@ -36,11 +34,9 @@ export default function EntryDialog() {
   const classes = useStyles()
   const { t } = useTranslation()
 
-  const masterPassword = 'master'
-
-  const { currentUser, setIsLoading, setSnackBar } = useContext(AppContext)
-  const { entries, setEntries, groups, selectedEntry } = useContext(ListContext)
+  const { groups, selectedEntry } = useContext(ListContext)
   const { entryDialog: open, setEntryDialog: setOpen } = useContext(ListContext)
+  const { createEntry, updateEntry } = useAPI()
 
   const initialState = useMemo(
     () => ({
@@ -57,86 +53,22 @@ export default function EntryDialog() {
 
   useEffect(() => {
     if (selectedEntry) {
-      const password = CryptoJS.AES.decrypt(
-        selectedEntry?.password,
-        masterPassword
-      ).toString(CryptoJS.enc.Utf8)
-
-      setState({ ...selectedEntry, password } as State)
+      setState(selectedEntry as State)
     } else {
       setState(initialState)
     }
-  }, [initialState, selectedEntry, setState])
+  }, [initialState, setState, selectedEntry])
 
-  /**
-   * エントリー作成
-   */
-  async function createEntry() {
-    setIsLoading(true)
-    const now = new Date().getTime()
-    // 暗号化
-    const password = CryptoJS.AES.encrypt(
-      state.password,
-      masterPassword
-    ).toString()
-
-    const entry = {
-      ...state,
-      password,
-      url: '',
-      group: '',
-      createdAt: now,
-      updatedAt: now,
-    }
-    // TODO: 暗号化
-
-    const db = firebase.firestore()
-    let doc = db.collection('passwords').doc(currentUser?.uid)
-
-    if (!(await doc.get()).exists) {
-      await doc.set({})
-    }
-
-    doc = await doc.collection('entries').add(entry)
-
+  const create = () => {
+    createEntry(state)
     setState(initialState)
     setOpen(false)
-    setIsLoading(false)
-
-    setEntries([...entries, { id: doc.id, ...entry }])
-    setSnackBar({ open: true, type: 'success', message: t('CREATED') })
   }
 
-  /**
-   * エントリー更新
-   */
-  async function updateEntry() {
-    setIsLoading(true)
-
+  const update = () => {
     if (selectedEntry) {
-      // 暗号化
-      const password = CryptoJS.AES.encrypt(
-        state.password,
-        masterPassword
-      ).toString()
-
-      const targetEntry = { ...selectedEntry, ...state, password }
-
-      await firebase
-        .firestore()
-        .collection('passwords')
-        .doc(currentUser?.uid)
-        .collection('entries')
-        .doc(targetEntry?.id)
-        .update(targetEntry)
-
+      updateEntry(selectedEntry, state)
       setOpen(false)
-      setIsLoading(false)
-
-      setEntries([
-        ...entries.map((e) => (e.id === targetEntry?.id ? targetEntry : e)),
-      ])
-      setSnackBar({ open: true, type: 'success', message: t('UPDATED') })
     }
   }
 
@@ -221,7 +153,7 @@ export default function EntryDialog() {
           {t('CANCEL')}
         </MUI.Button>
         <MUI.Button
-          onClick={selectedEntry ? updateEntry : createEntry}
+          onClick={selectedEntry ? update : create}
           color="primary"
           variant="contained"
         >
