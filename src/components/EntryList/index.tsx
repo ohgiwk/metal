@@ -39,7 +39,10 @@ const EntryList: React.FC<{
       ))}
       {entries.length === 0 && (
         <ListItem>
-          <ListItemText primary={t('NO_ENTRY')} className={classes.noEntry} />
+          <ListItemText
+            primary={t('HOME.NO_ENTRY')}
+            className={classes.noEntry}
+          />
         </ListItem>
       )}
     </List>
