@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import { SettingContext } from '../contexts/SettingContext'
+import useLocalStorage from '../hooks/useLocalStorage'
 
 export default function Login() {
   const {
@@ -11,8 +12,22 @@ export default function Login() {
     setLanguage,
     autoLock,
     setAutoLock,
+    autoLockTime,
+    setAutoLockTime,
+    passwordExpiration,
+    setPasswordExpiration,
+    daysToExpire,
+    setDaysToExpire,
   } = useContext(SettingContext)
   const { t, i18n } = useTranslation()
+  const [storage, setStorage] = useLocalStorage('USER_SETTING', {
+    theme,
+    language,
+    autoLock,
+    autoLockTime,
+    passwordExpiration,
+    daysToExpire,
+  })
 
   return (
     <MUI.Container className="app-content">
@@ -28,9 +43,11 @@ export default function Login() {
               <MUI.ListItemSecondaryAction>
                 <MUI.Select
                   value={theme}
-                  onChange={({ target: { value } }) =>
-                    setTheme(value as 'light' | 'dark')
-                  }
+                  onChange={({ target: { value } }) => {
+                    const theme = value as 'light' | 'dark'
+                    setTheme(theme)
+                    setStorage({ ...storage, theme })
+                  }}
                 >
                   <MUI.MenuItem value="light">Light</MUI.MenuItem>
                   <MUI.MenuItem value="dark">Dark</MUI.MenuItem>
@@ -45,9 +62,10 @@ export default function Login() {
                 <MUI.Select
                   value={language}
                   onChange={({ target: { value } }) => {
-                    const lang = value as string
-                    setLanguage(lang)
-                    i18n.changeLanguage(lang)
+                    const language = value as string
+                    setLanguage(language)
+                    i18n.changeLanguage(language)
+                    setStorage({ ...storage, language })
                   }}
                 >
                   <MUI.MenuItem value="ja">
@@ -68,14 +86,17 @@ export default function Login() {
               <MUI.ListItemSecondaryAction>
                 <MUI.Switch
                   checked={autoLock}
-                  onChange={({ target: { checked } }) => setAutoLock(checked)}
+                  onChange={({ target: { checked } }) => {
+                    setAutoLock(checked)
+                    setStorage({ ...storage, autoLock: checked })
+                  }}
                 ></MUI.Switch>
               </MUI.ListItemSecondaryAction>
             </MUI.ListItem>
 
             {/* 自動ロックまでの秒数 */}
             <MUI.ListItem>
-              <MUI.ListItemText>Auto Lock after inactivity of</MUI.ListItemText>
+              <MUI.ListItemText>自動ロックまでの時間</MUI.ListItemText>
               <MUI.ListItemSecondaryAction>
                 <MUI.TextField
                   type="number"
@@ -85,6 +106,11 @@ export default function Login() {
                     min: 0,
                   }}
                   disabled={!autoLock}
+                  onChange={({ target: { value } }) => {
+                    const autoLockTime = Number(value)
+                    setAutoLockTime(autoLockTime)
+                    setStorage({ ...storage, autoLockTime })
+                  }}
                 ></MUI.TextField>
               </MUI.ListItemSecondaryAction>
             </MUI.ListItem>
@@ -96,8 +122,11 @@ export default function Login() {
               </MUI.ListItemText>
               <MUI.ListItemSecondaryAction>
                 <MUI.Switch
-                  checked={autoLock}
-                  onChange={({ target: { checked } }) => setAutoLock(checked)}
+                  checked={passwordExpiration}
+                  onChange={({ target: { checked } }) => {
+                    setPasswordExpiration(checked)
+                    setStorage({ ...storage, passwordExpiration: checked })
+                  }}
                 ></MUI.Switch>
               </MUI.ListItemSecondaryAction>
             </MUI.ListItem>
@@ -113,7 +142,12 @@ export default function Login() {
                   inputProps={{
                     min: 0,
                   }}
-                  disabled={!autoLock}
+                  disabled={!passwordExpiration}
+                  onChange={({ target: { value } }) => {
+                    const daysToExpire = Number(value)
+                    setDaysToExpire(daysToExpire)
+                    setStorage({ ...storage, daysToExpire })
+                  }}
                 ></MUI.TextField>
               </MUI.ListItemSecondaryAction>
             </MUI.ListItem>
