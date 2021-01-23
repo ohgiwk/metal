@@ -113,9 +113,7 @@ export default function Login() {
                   type="number"
                   label="time (sec)"
                   defaultValue="300"
-                  inputProps={{
-                    min: 0,
-                  }}
+                  inputProps={{ min: 0 }}
                   disabled={!autoLock}
                   onChange={({ target: { value } }) => {
                     const autoLockTime = Number(value)
@@ -151,9 +149,7 @@ export default function Login() {
                   type="number"
                   label="Days"
                   defaultValue="180"
-                  inputProps={{
-                    min: 0,
-                  }}
+                  inputProps={{ min: 0 }}
                   disabled={!passwordExpiration}
                   onChange={({ target: { value } }) => {
                     const daysToExpire = Number(value)

@@ -2,12 +2,14 @@ import React, { useEffect, useState, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import moment from 'moment'
 
 import PasswordInput from '../PasswordInput'
 import { ListContext } from '../../contexts/ListContext'
 import useAPI from '../../hooks/useAPI'
 import PasswordGenerator from '../PasswordGenerator'
+import { SettingContext } from '../../contexts/SettingContext'
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: { paddingBottom: '0' },
@@ -19,8 +21,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '12px',
     color: 'gray',
     textAlign: 'right',
-    marginBottom: '1rem',
+    marginBottom: '0.5rem',
   },
+  expired: { textAlign: 'right' },
+  warning: { verticalAlign: 'middle' },
+  warningIcon: { verticalAlign: 'middle', margin: '0 5px 3px 0' },
 }))
 
 interface State {
@@ -38,6 +43,7 @@ export default function EntryDialog() {
 
   const { groups, selectedEntry } = useContext(ListContext)
   const { entryDialog: open, setEntryDialog: setOpen } = useContext(ListContext)
+  const { daysToExpire } = useContext(SettingContext)
   const { createEntry, updateEntry } = useAPI()
 
   const initialState = useMemo(
@@ -76,9 +82,15 @@ export default function EntryDialog() {
 
   const onCancel = () => {
     // リセット
-    setState(selectedEntry as State)
+    setState((selectedEntry as State) ?? initialState)
     setOpen(false)
   }
+
+  const isExpired = selectedEntry
+    ? moment().isAfter(
+        moment(selectedEntry.updatedAt).add(daysToExpire, 'days')
+      )
+    : false
 
   return (
     <MUI.Dialog open={open} onClose={onCancel} fullWidth>
@@ -90,6 +102,16 @@ export default function EntryDialog() {
           <div className={classes.date}>
             CREATED: {moment(selectedEntry?.createdAt).format('YYYY/MM/DD')}
           </div>
+        )}
+
+        {isExpired && (
+          <MUI.Typography className={classes.expired} color="error">
+            <ErrorOutlineIcon
+              className={classes.warningIcon}
+              fontSize="small"
+            />
+            <span className={classes.warning}>Password Expired</span>
+          </MUI.Typography>
         )}
 
         <MUI.TextField
@@ -127,7 +149,6 @@ export default function EntryDialog() {
             />
           </div>
         </div>
-
         <MUI.TextField
           label={t('NOTE')}
           multiline
