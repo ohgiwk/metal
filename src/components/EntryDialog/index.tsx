@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import moment from 'moment'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import PasswordInput from '../PasswordInput'
 import { ListContext } from '../../contexts/ListContext'
 import useAPI from '../../hooks/useAPI'
+import PasswordGenerator from '../PasswordGenerator'
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: { paddingBottom: '0' },
@@ -111,6 +113,10 @@ export default function EntryDialog() {
               setState({ ...state, password })
             }
             className={classes.textField}
+          />
+
+          <PasswordGenerator
+            onSubmit={(password: string) => setState({ ...state, password })}
           />
         </div>
 
