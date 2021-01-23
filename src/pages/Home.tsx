@@ -8,6 +8,7 @@ import EntryDialog from '../components/EntryDialog'
 import GroupDialog from '../components/GroupDialog'
 import EntryList from '../components/EntryList'
 import GroupList from '../components/GroupList'
+import GroupSelect from '../components/GroupSelect'
 import FAB from '../components/FAB'
 import { Entry } from '../common/Types'
 import { ListContext } from '../contexts/ListContext'
@@ -16,7 +17,13 @@ import useClipboard from '../hooks/useClipboard'
 import useAPI from '../hooks/useAPI'
 
 export default function Home() {
-  const { entries, selectedEntry, selectedGroup } = useContext(ListContext)
+  const {
+    entries,
+    groups,
+    setSelectedGroup,
+    selectedEntry,
+    selectedGroup,
+  } = useContext(ListContext)
   const { copyPassword } = useClipboard()
   const { fetchEntries, fetchGroups } = useAPI()
 
@@ -108,11 +115,19 @@ const View: React.FC<ViewProps> = (props) => {
           </MUI.CardActions>
 
           <MUI.Grid container spacing={3}>
-            <MUI.Grid item xs={12} md={3}>
-              <GroupList />
-            </MUI.Grid>
+            <MUI.Hidden smUp>
+              <MUI.Grid item xs={12}>
+                <GroupSelect />
+              </MUI.Grid>
+            </MUI.Hidden>
 
-            <MUI.Grid item xs={12} md={9}>
+            <MUI.Hidden xsDown>
+              <MUI.Grid item sm={3}>
+                <GroupList />
+              </MUI.Grid>
+            </MUI.Hidden>
+
+            <MUI.Grid item xs={12} sm={9}>
               <EntryList entries={props.visibleEntries} />
             </MUI.Grid>
           </MUI.Grid>
