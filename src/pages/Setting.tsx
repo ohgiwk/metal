@@ -1,10 +1,18 @@
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import { SettingContext } from '../contexts/SettingContext'
 import useLocalStorage from '../hooks/useLocalStorage'
 
+const useStyles = makeStyles(() => ({
+  select: {
+    width: '120px',
+  },
+}))
+
 export default function Login() {
+  const classes = useStyles()
   const {
     theme,
     setTheme,
@@ -42,6 +50,7 @@ export default function Login() {
               <MUI.ListItemText>{t('SETTING.THEME')}</MUI.ListItemText>
               <MUI.ListItemSecondaryAction>
                 <MUI.Select
+                  className={classes.select}
                   value={theme}
                   onChange={({ target: { value } }) => {
                     const theme = value as 'light' | 'dark'
@@ -60,6 +69,7 @@ export default function Login() {
               <MUI.ListItemText>{t('SETTING.LANGUAGE')}</MUI.ListItemText>
               <MUI.ListItemSecondaryAction>
                 <MUI.Select
+                  className={classes.select}
                   value={language}
                   onChange={({ target: { value } }) => {
                     const language = value as string
