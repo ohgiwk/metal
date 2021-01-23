@@ -17,13 +17,7 @@ import useClipboard from '../hooks/useClipboard'
 import useAPI from '../hooks/useAPI'
 
 export default function Home() {
-  const {
-    entries,
-    groups,
-    setSelectedGroup,
-    selectedEntry,
-    selectedGroup,
-  } = useContext(ListContext)
+  const { entries, selectedEntry, selectedGroup } = useContext(ListContext)
   const { copyPassword } = useClipboard()
   const { fetchEntries, fetchGroups } = useAPI()
 
