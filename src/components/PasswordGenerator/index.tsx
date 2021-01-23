@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
-const useStyle = makeStyles(() => ({
+const useStyle = makeStyles((theme) => ({
   pager: {
-    background: '#333',
+    background: theme.palette.background.default,
     padding: '1rem',
     width: '100%',
     textAlign: 'center',
@@ -57,6 +57,7 @@ const PasswordGenerator: React.FC<{
         <MUI.FormControlLabel
           control={
             <MUI.Checkbox
+              color="primary"
               name="A-Z"
               checked={useUppercase}
               onChange={({ target: { checked } }) => setUseUppercase(checked)}
@@ -67,6 +68,7 @@ const PasswordGenerator: React.FC<{
         <MUI.FormControlLabel
           control={
             <MUI.Checkbox
+              color="primary"
               name="a-z"
               checked={useLowercase}
               onChange={({ target: { checked } }) => setUseLowercase(checked)}
@@ -77,6 +79,7 @@ const PasswordGenerator: React.FC<{
         <MUI.FormControlLabel
           control={
             <MUI.Checkbox
+              color="primary"
               name="0-9"
               checked={useNumber}
               onChange={({ target: { checked } }) => setUseNumber(checked)}

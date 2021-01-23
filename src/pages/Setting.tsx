@@ -85,6 +85,7 @@ export default function Login() {
               <MUI.ListItemText>{t('SETTING.AUTO_LOCK')}</MUI.ListItemText>
               <MUI.ListItemSecondaryAction>
                 <MUI.Switch
+                  color="primary"
                   checked={autoLock}
                   onChange={({ target: { checked } }) => {
                     setAutoLock(checked)
@@ -122,6 +123,7 @@ export default function Login() {
               </MUI.ListItemText>
               <MUI.ListItemSecondaryAction>
                 <MUI.Switch
+                  color="primary"
                   checked={passwordExpiration}
                   onChange={({ target: { checked } }) => {
                     setPasswordExpiration(checked)
