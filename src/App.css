@@ -1,16 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
 
-body {
-  /* background-color: #fff; */
-  /* background-color: #2c2d2f; */
-  /* background-color: #282c34; */
-}
-
 .app-content {
-  min-height: 100vh;
-  display: flex !important;
-  flex-direction: column;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 80px 0 80px;
 }

@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   createNew: { marginLeft: 'auto' },
   noEntry: { color: 'gray', textAlign: 'center', marginTop: '2rem' },
   nested: { paddingLeft: theme.spacing(4) },
+  card: { background: theme.palette.background.default },
 }))
 
 interface ViewProps {
@@ -77,56 +78,46 @@ const View: React.FC<ViewProps> = (props) => {
     <MUI.Container className="app-content">
       <EntryDialog />
       <GroupDialog />
-      <MUI.Card>
-        <MUI.CardContent>
-          <MUI.CardActions>
-            <SearchIcon className={classes.searchIcon} />
-            <MUI.TextField
-              label={t('HOME.SEARCH')}
-              margin="dense"
-              className={classes.searchField}
-              value={props.searchText}
-              onChange={({ target: { value } }) =>
-                props.onChangeSearchField(value)
-              }
-            />
 
-            <MUI.Select
-              className={classes.sortField}
-              label={t('HOME.SORT')}
-              value={props.sort}
-              onChange={({ target: { value } }) =>
-                props.onChangeSortSelect(value as string)
-              }
-            >
-              <MUI.MenuItem value="createdAt">
-                {t('HOME.CREATED_DATE')}
-              </MUI.MenuItem>
-              <MUI.MenuItem value="updatedAt">
-                {t('HOME.UPDATE_DATE')}
-              </MUI.MenuItem>
-            </MUI.Select>
-          </MUI.CardActions>
+      <SearchIcon className={classes.searchIcon} />
+      <MUI.TextField
+        label={t('HOME.SEARCH')}
+        margin="dense"
+        className={classes.searchField}
+        value={props.searchText}
+        onChange={({ target: { value } }) => props.onChangeSearchField(value)}
+      />
 
-          <MUI.Grid container spacing={3}>
-            <MUI.Hidden smUp>
-              <MUI.Grid item xs={12}>
-                <GroupSelect />
-              </MUI.Grid>
-            </MUI.Hidden>
+      {/* <MUI.Select
+        className={classes.sortField}
+        label={t('HOME.SORT')}
+        value={props.sort}
+        onChange={({ target: { value } }) =>
+          props.onChangeSortSelect(value as string)
+        }
+      >
+        <MUI.MenuItem value="createdAt">{t('HOME.CREATED_DATE')}</MUI.MenuItem>
+        <MUI.MenuItem value="updatedAt">{t('HOME.UPDATE_DATE')}</MUI.MenuItem>
+      </MUI.Select> */}
 
-            <MUI.Hidden xsDown>
-              <MUI.Grid item sm={3}>
-                <GroupList />
-              </MUI.Grid>
-            </MUI.Hidden>
-
-            <MUI.Grid item xs={12} sm={9}>
-              <EntryList entries={props.visibleEntries} />
-            </MUI.Grid>
+      <MUI.Grid container spacing={3}>
+        <MUI.Hidden smUp>
+          <MUI.Grid item xs={12}>
+            <GroupSelect />
           </MUI.Grid>
-        </MUI.CardContent>
-      </MUI.Card>
+        </MUI.Hidden>
+
+        <MUI.Hidden xsDown>
+          <MUI.Grid item sm={3}>
+            <GroupList />
+          </MUI.Grid>
+        </MUI.Hidden>
+
+        <MUI.Grid item xs={12} sm={9}>
+          <EntryList entries={props.visibleEntries} />
+        </MUI.Grid>
+      </MUI.Grid>
+
       <FAB />
     </MUI.Container>
   )
