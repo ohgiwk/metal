@@ -1,7 +1,13 @@
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-// prettier-ignore
-import { IconButton, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction } from '@material-ui/core'
+import {
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemSecondaryAction,
+  Tooltip,
+} from '@material-ui/core'
 import KeyIcon from '@material-ui/icons/VpnKey'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AssignmentIcon from '@material-ui/icons/Assignment'
@@ -71,9 +77,11 @@ const EntryListItem: React.FC<{
       </ListItemIcon>
       <ListItemText primary={props.entry.title} />
       <ListItemSecondaryAction>
-        <IconButton onClick={() => copyPassword(props.entry)}>
-          <AssignmentIcon />
-        </IconButton>
+        <Tooltip title="Copy To Clipboard">
+          <IconButton onClick={() => copyPassword(props.entry)}>
+            <AssignmentIcon />
+          </IconButton>
+        </Tooltip>
 
         <OptionMenu
           items={[
