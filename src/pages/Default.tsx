@@ -42,7 +42,10 @@ export function Default() {
   useEffect(() => initAuth(), [initAuth])
 
   const muiTheme = createMuiTheme({
-    palette: { type: theme, primary: { main: '#90caf9' } },
+    palette: {
+      type: theme,
+      primary: { main: theme === 'dark' ? '#4dd0e1' : '#e91e63' },
+    },
   })
 
   return (
