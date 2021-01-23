@@ -51,10 +51,11 @@ const useAPI = () => {
   async function createEntry(state: State) {
     setIsLoading(true)
     const now = new Date().getTime()
+    const { password } = state
 
     const entry = {
       ...state,
-      password: encrypt(state.password),
+      password: encrypt(password),
       createdAt: now,
       updatedAt: now,
     }
@@ -69,7 +70,7 @@ const useAPI = () => {
 
     setIsLoading(false)
 
-    setEntries([...entries, { id: doc.id, ...entry }])
+    setEntries([...entries, { id: doc.id, ...entry, password }])
     setSnackBar({ open: true, type: 'success', message: t('CREATED') })
   }
 
@@ -95,6 +96,7 @@ const useAPI = () => {
 
     setIsLoading(false)
 
+    targetEntry.password = state.password
     setEntries([
       ...entries.map((e) => (e.id === targetEntry?.id ? targetEntry : e)),
     ])
