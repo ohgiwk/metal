@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import moment from 'moment'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import PasswordInput from '../PasswordInput'
 import { ListContext } from '../../contexts/ListContext'
@@ -12,8 +11,9 @@ import PasswordGenerator from '../PasswordGenerator'
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: { paddingBottom: '0' },
-  textField: { margin: ' 0 1rem 1rem 0', width: '47%' },
-  textArea: { marginBottom: '1rem', width: '100%' },
+  half: { margin: ' 0 1rem 1rem 0', width: '47%' },
+  textField: { marginBottom: '1rem', width: '100%' },
+  generator: { marginBottom: '1rem' },
   formControl: { margin: theme.spacing(1), minWidth: 120 },
   date: {
     fontSize: '12px',
@@ -74,8 +74,14 @@ export default function EntryDialog() {
     }
   }
 
+  const onCancel = () => {
+    // リセット
+    setState(selectedEntry as State)
+    setOpen(false)
+  }
+
   return (
-    <MUI.Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+    <MUI.Dialog open={open} onClose={onCancel} fullWidth>
       <MUI.DialogTitle className={classes.dialogTitle}>
         {t('CREATE_ENTRY')}
       </MUI.DialogTitle>
@@ -92,7 +98,7 @@ export default function EntryDialog() {
           onChange={({ target: { value: title } }) =>
             setState({ ...state, title })
           }
-          className={classes.textArea}
+          className={classes.textField}
           fullWidth
           autoFocus
           margin="dense"
@@ -104,7 +110,7 @@ export default function EntryDialog() {
             onChange={({ target: { value: username } }) =>
               setState({ ...state, username })
             }
-            className={classes.textField}
+            className={classes.half}
           ></MUI.TextField>
           <PasswordInput
             label={t('PASSWORD')}
@@ -112,12 +118,14 @@ export default function EntryDialog() {
             onChange={({ target: { value: password } }) =>
               setState({ ...state, password })
             }
-            className={classes.textField}
+            className={classes.half}
           />
 
-          <PasswordGenerator
-            onSubmit={(password: string) => setState({ ...state, password })}
-          />
+          <div className={classes.generator}>
+            <PasswordGenerator
+              onSubmit={(password: string) => setState({ ...state, password })}
+            />
+          </div>
         </div>
 
         <MUI.TextField
@@ -128,13 +136,13 @@ export default function EntryDialog() {
           onChange={({ target: { value: note } }) =>
             setState({ ...state, note })
           }
-          className={classes.textArea}
+          className={classes.textField}
         ></MUI.TextField>
         <MUI.TextField
           label={t('URL')}
           value={state.url}
           onChange={({ target: { value: url } }) => setState({ ...state, url })}
-          className={classes.textArea}
+          className={classes.textField}
         ></MUI.TextField>
         <div>
           <MUI.FormControl className={classes.formControl}>
@@ -155,7 +163,7 @@ export default function EntryDialog() {
         </div>
       </MUI.DialogContent>
       <MUI.DialogActions>
-        <MUI.Button onClick={() => setOpen(false)} color="default">
+        <MUI.Button onClick={onCancel} color="default">
           {t('CANCEL')}
         </MUI.Button>
         <MUI.Button
