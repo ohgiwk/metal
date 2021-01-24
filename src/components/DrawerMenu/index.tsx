@@ -11,7 +11,13 @@ import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import { AppContext } from '../../contexts/AppContext'
 
 const useStyles = makeStyles({
-  list: { width: 250, height: '100%' },
+  list: {
+    width: 250,
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
   fullList: { width: 'auto' },
   spaceOuter: {
     height: 'calc(100% - 225px)',
@@ -65,44 +71,47 @@ export default function DrawerMenu(props: Props) {
           onClick={toggleDrawer(false)}
           onKeyDown={toggleDrawer(false)}
         >
-          <List>
-            <ListItem button component={Link} to="/">
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('DRAWER.HOME')} />
-            </ListItem>
-          </List>
-
-          <Divider />
-
-          <List>
-            {isAuth && (
-              <ListItem button component={Link} to="/setting">
+          <div>
+            <List>
+              <ListItem button component={Link} to="/">
                 <ListItemIcon>
-                  <SettingsIcon />
+                  <HomeIcon />
                 </ListItemIcon>
-                <ListItemText primary={t('DRAWER.SETTING')} />
+                <ListItemText primary={t('DRAWER.HOME')} />
               </ListItem>
-            )}
+            </List>
 
-            <ListItem
-              button
-              component="a"
-              target="new"
-              href="https://github.com/ohgiwk/metal"
-            >
-              <ListItemIcon>
-                <GithubIcon />
-              </ListItemIcon>
-              <ListItemText primary={t('DRAWER.GITHUB')} />
-              <OpenInNewIcon />
-            </ListItem>
+            <Divider />
 
-            <ListItem button onClick={() => setInfoDialog(true)}>
-              <ListItemText primary={t('DRAWER.ABOUT_THIS_APP')} />
-            </ListItem>
-          </List>
+            <List>
+              {isAuth && (
+                <ListItem button component={Link} to="/setting">
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={t('DRAWER.SETTING')} />
+                </ListItem>
+              )}
+
+              <ListItem
+                button
+                component="a"
+                target="new"
+                href="https://github.com/ohgiwk/metal"
+              >
+                <ListItemIcon>
+                  <GithubIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('DRAWER.GITHUB')} />
+                <OpenInNewIcon />
+              </ListItem>
+
+              <ListItem button onClick={() => setInfoDialog(true)}>
+                <ListItemText primary={t('DRAWER.ABOUT_THIS_APP')} />
+              </ListItem>
+            </List>
+          </div>
+
           <div className={classes.spaceOuter}>
             <div className={classes.space}>
               <div className={classes.spaceInner}></div>
