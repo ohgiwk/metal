@@ -32,7 +32,7 @@ export default function Home() {
 
   const visibleEntries = entries
     .filter((e) => (selectedGroup ? e.group === selectedGroup.id : true))
-    .filter((e) => e.title.includes(searchText))
+    .filter((e) => e.title.toLowerCase().includes(searchText))
     .sort((a, b) => (a?.[sort] > b[sort] ? -1 : a[sort] < b[sort] ? 1 : 0))
 
   useHotkeys([
@@ -75,7 +75,7 @@ const View: React.FC<ViewProps> = (props) => {
   const { t } = useTranslation()
 
   return (
-    <MUI.Container className="app-content">
+    <MUI.Container className="app-content" maxWidth="md">
       <EntryDialog />
       <GroupDialog />
 
