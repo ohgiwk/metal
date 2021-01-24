@@ -24,7 +24,11 @@ export default function PasswordInput(props: Props) {
         endAdornment={
           <InputAdornment position="end">
             <IconButton onClick={onClick}>
-              {showPassword ? <Visibility /> : <VisibilityOff />}
+              {showPassword ? (
+                <Visibility fontSize="small" />
+              ) : (
+                <VisibilityOff fontSize="small" />
+              )}
             </IconButton>
           </InputAdornment>
         }
