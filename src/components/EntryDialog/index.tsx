@@ -13,8 +13,9 @@ import { SettingContext } from '../../contexts/SettingContext'
 
 const useStyles = makeStyles((theme) => ({
   dialogTitle: { paddingBottom: '0' },
-  half: { margin: ' 0 1rem 1rem 0', width: '47%' },
+  half: { margin: ' 0 1rem 1rem 0', width: '95%' },
   textField: { marginBottom: '1rem', width: '100%' },
+  password: { width: '100%' },
   generator: { marginBottom: '1rem' },
   formControl: { margin: theme.spacing(1), minWidth: 120 },
   date: {
@@ -26,6 +27,21 @@ const useStyles = makeStyles((theme) => ({
   expired: { textAlign: 'right' },
   warning: { verticalAlign: 'middle' },
   warningIcon: { verticalAlign: 'middle', margin: '0 5px 3px 0' },
+  passwordLevel_high: {
+    '& > .MuiLinearProgress-bar': {
+      background: '#ff0000',
+    },
+  },
+  passwordLevel_middle: {
+    '& > .MuiLinearProgress-bar': {
+      background: '#ffff00',
+    },
+  },
+  passwordLevel_row: {
+    '& > .MuiLinearProgress-bar': {
+      background: '#0000ff',
+    },
+  },
 }))
 
 interface State {
@@ -46,6 +62,8 @@ export default function EntryDialog() {
   const { daysToExpire } = useContext(SettingContext)
   const { createEntry, updateEntry } = useAPI()
 
+  const [passwordLevel, setPasswordLevel] = useState(0)
+
   const initialState = useMemo(
     () => ({
       title: '',
@@ -62,6 +80,7 @@ export default function EntryDialog() {
   useEffect(() => {
     if (selectedEntry) {
       setState(selectedEntry as State)
+      checkPasswordLevel(selectedEntry.password)
     } else {
       setState(initialState)
     }
@@ -77,6 +96,21 @@ export default function EntryDialog() {
     if (selectedEntry) {
       updateEntry(selectedEntry, state)
       setOpen(false)
+    }
+  }
+
+  const checkPasswordLevel = (password: string) => {
+    let level = password.length * 2
+    level = level > 100 ? 100 : level
+    setPasswordLevel(level)
+  }
+  const getPassLevelState = (level: number) => {
+    if (level > 50) {
+      return { className: classes.passwordLevel_high, text: '強' }
+    } else if (level > 25) {
+      return { className: classes.passwordLevel_middle, text: '中' }
+    } else {
+      return { className: classes.passwordLevel_row, text: '弱' }
     }
   }
 
@@ -126,23 +160,47 @@ export default function EntryDialog() {
           margin="dense"
         ></MUI.TextField>
         <div>
-          <MUI.TextField
-            label={t('USERNAME')}
-            value={state.username}
-            onChange={({ target: { value: username } }) =>
-              setState({ ...state, username })
-            }
-            className={classes.half}
-          ></MUI.TextField>
-          <PasswordInput
-            label={t('PASSWORD')}
-            value={state.password}
-            onChange={({ target: { value: password } }) =>
-              setState({ ...state, password })
-            }
-            className={classes.half}
-          />
+          <MUI.Grid container>
+            <MUI.Grid item xs={6}>
+              <MUI.TextField
+                label={t('USERNAME')}
+                value={state.username}
+                onChange={({ target: { value: username } }) =>
+                  setState({ ...state, username })
+                }
+                className={classes.half}
+              ></MUI.TextField>
+            </MUI.Grid>
 
+            <MUI.Grid item xs={6}>
+              <div className={classes.half}>
+                <PasswordInput
+                  className={classes.password}
+                  label={t('PASSWORD')}
+                  value={state.password}
+                  onChange={({ target: { value: password } }) => {
+                    setState({ ...state, password })
+                    checkPasswordLevel(password)
+                  }}
+                />
+                {(() => {
+                  const { text, className } = getPassLevelState(passwordLevel)
+                  return (
+                    <>
+                      <MUI.LinearProgress
+                        variant="determinate"
+                        value={passwordLevel}
+                        className={className}
+                      />
+                      <div style={{ marginTop: '2px', fontSize: '11px' }}>
+                        パスワード強度： {text}
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
+            </MUI.Grid>
+          </MUI.Grid>
           <div className={classes.generator}>
             <PasswordGenerator
               onSubmit={(password: string) => setState({ ...state, password })}
