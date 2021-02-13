@@ -1,10 +1,12 @@
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
+
 import { SettingContext } from '../contexts/SettingContext'
 import useLocalStorage from '../hooks/useLocalStorage'
-import PasswordInput from '../components/PasswordInput'
+import PasswordChangeForm from '../components/PasswordChangeForm'
 
 const useStyles = makeStyles(() => ({
   select: { width: '120px' },
@@ -12,11 +14,11 @@ const useStyles = makeStyles(() => ({
 
 const TabPanel = ({ children, value, index, ...other }: any) => (
   <div role="tabpanel" {...other}>
-    {value === index && <MUI.Box p={3}>{children}</MUI.Box>}
+    {value === index && <MUI.Box>{children}</MUI.Box>}
   </div>
 )
 
-export default function Login() {
+const Login: React.FC<{}> = () => {
   const classes = useStyles()
   // prettier-ignore
   const { theme, setTheme, language, setLanguage, autoLock, setAutoLock, autoLockTime, setAutoLockTime,
@@ -49,7 +51,7 @@ export default function Login() {
 
   return (
     <MUI.Container className="app-content" maxWidth="md">
-      <MUI.Box p={5} pb={0}>
+      <MUI.Box p={2} pt={5} pb={0}>
         <MUI.Typography variant="h4">{t('SETTING.SETTING')}</MUI.Typography>
 
         <MUI.Tabs
@@ -84,7 +86,6 @@ export default function Login() {
               </MUI.Select>
             </MUI.ListItemSecondaryAction>
           </MUI.ListItem>
-
           {/* 言語 */}
           <MUI.ListItem>
             <MUI.ListItemText>{t('SETTING.LANGUAGE')}</MUI.ListItemText>
@@ -104,37 +105,9 @@ export default function Login() {
               </MUI.Select>
             </MUI.ListItemSecondaryAction>
           </MUI.ListItem>
-
-          <MUI.Divider style={{ marginTop: '2rem' }} />
-
-          <MUI.ListSubheader>パスワード変更</MUI.ListSubheader>
-          <MUI.ListItem>
-            <MUI.ListItemText>現在のパスワード</MUI.ListItemText>
-            <MUI.ListItemSecondaryAction>
-              <PasswordInput label="" value="" onChange={() => {}} />
-            </MUI.ListItemSecondaryAction>
-          </MUI.ListItem>
-          <MUI.ListItem>
-            <MUI.ListItemText>新しいパスワード</MUI.ListItemText>
-            <MUI.ListItemSecondaryAction>
-              <PasswordInput label="" value="" onChange={() => {}} />
-            </MUI.ListItemSecondaryAction>
-          </MUI.ListItem>
-          <MUI.ListItem>
-            <MUI.ListItemText>新しいパスワード (確認)</MUI.ListItemText>
-            <MUI.ListItemSecondaryAction>
-              <PasswordInput label="" value="" onChange={() => {}} />
-            </MUI.ListItemSecondaryAction>
-          </MUI.ListItem>
-          <MUI.ListItem style={{ paddingTop: '60px' }}>
-            <MUI.ListItemText></MUI.ListItemText>
-            <MUI.ListItemSecondaryAction>
-              <MUI.Button variant="contained" color="primary">
-                パスワード変更
-              </MUI.Button>
-            </MUI.ListItemSecondaryAction>
-          </MUI.ListItem>
         </MUI.List>
+        <MUI.Divider style={{ marginTop: '2rem' }} />
+        <PasswordChangeForm />
       </TabPanel>
 
       <TabPanel value={tab} index={1}>
@@ -219,3 +192,5 @@ export default function Login() {
     </MUI.Container>
   )
 }
+
+export default Login

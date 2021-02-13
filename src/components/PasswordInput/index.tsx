@@ -7,6 +7,7 @@ interface Props {
   label: string
   value: string
   className?: string
+  labelShrink?: boolean
   onChange: (event: { target: { value: string } }) => void
 }
 
@@ -16,7 +17,9 @@ export default function PasswordInput(props: Props) {
 
   return (
     <FormControl className={props.className}>
-      <InputLabel>{props.label}</InputLabel>
+      <InputLabel shrink={!!props.value || props?.labelShrink}>
+        {props.label}
+      </InputLabel>
       <Input
         type={showPassword ? 'text' : 'password'}
         value={props.value}
