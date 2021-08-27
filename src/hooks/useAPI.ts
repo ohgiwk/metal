@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
 import CryptoJS from 'crypto-js'
 
 import { Entry, Group } from '../common/Types'

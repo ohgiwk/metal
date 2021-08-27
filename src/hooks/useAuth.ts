@@ -1,5 +1,6 @@
 import { useContext } from 'react'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
