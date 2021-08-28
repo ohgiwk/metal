@@ -36,7 +36,7 @@ export function Default() {
   const { initAuth } = useAuth()
   const [drawer, setDrawer] = useState(false)
   // prettier-ignore
-  const { isAuth, isAppLoading, isLoading, snackBar, setSnackBar, confirmDialog: CD } = useContext(AppContext)
+  const { isAuth, isAppLoading, isLoading, snackBar, setSnackBar, confirmDialog } = useContext(AppContext)
   const { theme } = useContext(SettingContext)
 
   useEffect(() => initAuth(), [initAuth])
@@ -69,15 +69,7 @@ export function Default() {
                   onClose={() => setSnackBar({ ...snackBar, open: false })}
                 />
 
-                <ConfirmDialog
-                  open={CD.open}
-                  title={CD.title}
-                  text={CD.text}
-                  primaryButtonText={CD.primaryButtonText}
-                  secondaryButtonText={CD.secondaryButtonText}
-                  onClickPrimaryButton={CD.onClickPrimaryButton}
-                  onClickSecondaryButton={CD.onClickSecondaryButton}
-                />
+                <ConfirmDialog {...confirmDialog} />
 
                 <Backdrop className={classes.backdrop} open={isLoading}>
                   <CircularProgress color="inherit" />
