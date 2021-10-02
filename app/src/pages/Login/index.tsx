@@ -6,6 +6,7 @@ import { Link, Button, Card, CardContent, Container, TextField, Grid } from '@ma
 import FacebookIcon from '@material-ui/icons/Facebook'
 import TwitterIcon from '@material-ui/icons/Twitter'
 import GitHubIcon from '@material-ui/icons/GitHub'
+import clsx from 'clsx'
 
 import { AppContext } from '../../contexts/AppContext'
 import useAuth from '../../hooks/useAuth'
@@ -66,6 +67,9 @@ const View: React.FC<ViewProps> = (props) => {
                   onChange={({ target: { value } }) =>
                     props.onChangeUsername(value)
                   }
+                  InputProps={
+                    { className: 'username' }
+                  }
                 />
                 <TextField
                   label={t('PASSWORD')}
@@ -77,6 +81,9 @@ const View: React.FC<ViewProps> = (props) => {
                     props.onChangePassword(value)
                   }
                   onKeyPress={props.onKeypressPassword}
+                  InputProps={
+                    { className: 'password' }
+                  }
                 />
               </form>
               <div>
@@ -92,7 +99,7 @@ const View: React.FC<ViewProps> = (props) => {
                 variant="contained"
                 color="primary"
                 onClick={props.onClickLoginButton}
-                className={classes.button}
+                className={clsx(classes.button, 'login-btn')}
                 disabled={props.isLoading}
               >
                 {t('LOGIN')}
