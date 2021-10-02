@@ -36,9 +36,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "firebase deploy",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "deploy": "firebase deploy"
   },
   "eslintConfig": {
     "extends": [
@@ -60,12 +58,6 @@
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^1.1.7",
-    "@storybook/addon-actions": "^6.1.14",
-    "@storybook/addon-essentials": "^6.1.14",
-    "@storybook/addon-links": "^6.1.14",
-    "@storybook/node-logger": "^6.1.14",
-    "@storybook/preset-create-react-app": "^3.1.5",
-    "@storybook/react": "^6.1.14",
     "@types/crypto-js": "^4.0.1",
     "@types/enzyme": "^3.10.8",
     "@types/react-router-dom": "^5.1.6",
