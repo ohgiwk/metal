@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useState, lazy, Suspense } from 'react'
-// prettier-ignore
+import { useContext, useEffect, useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Switch, Route, Redirect, RouteProps } from 'react-router-dom'
 import { Backdrop, CircularProgress, CssBaseline } from '@material-ui/core'
-// prettier-ignore
 import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core/styles'
 
 import DrawerMenu from '../components/DrawerMenu'
@@ -16,11 +14,11 @@ import { SettingContext } from '../contexts/SettingContext'
 import useAuth from '../hooks/useAuth'
 
 import AppLoading from './AppLoading'
-import Home from '../pages/Home'
+import Home from './Home'
 
-const Setting = lazy(() => import('../pages/Setting'))
-const Login = lazy(() => import('../pages/Login'))
-const SignUp = lazy(() => import('../pages/SignUp'))
+const Setting = lazy(() => import('./Setting'))
+const Login = lazy(() => import('./Login'))
+const SignUp = lazy(() => import('./Signup'))
 
 const useStyles = makeStyles((theme) => ({
   backdrop: { zIndex: theme.zIndex.modal + 1, flexDirection: 'column' },

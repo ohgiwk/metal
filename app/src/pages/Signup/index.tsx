@@ -6,8 +6,8 @@ import { Button, Card, CardContent, Container, TextField, } from '@material-ui/c
 import { makeStyles } from '@material-ui/core/styles'
 // import firebase from 'firebase'
 
-import { AppContext } from '../contexts/AppContext'
-import useAuth from '../hooks/useAuth'
+import { AppContext } from '../../contexts/AppContext'
+import useAuth from '../../hooks/useAuth'
 
 const useStyles = makeStyles(() => ({
   login: { fontFamily: "'Lora', serif" },
