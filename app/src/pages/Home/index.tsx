@@ -25,6 +25,7 @@ export default function Home() {
     fetchEntries()
     fetchGroups()
     // 無限ループになるので、空配列のままで
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const [searchText, setSearchText] = useState('')

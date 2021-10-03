@@ -35,19 +35,19 @@ const Login: React.FC<{}> = () => {
 
   const [tab, setTab] = React.useState(0)
 
-  function getGeoLocation() {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude //緯度を取得して定数latに代入
-        const lng = pos.coords.longitude //経度を取得して定数lngに代入
-        const accuracy = pos.coords.accuracy //同じく精度を定数accuracyに代入
-        console.log(lat, lng, accuracy)
-      },
-      () => {
-        window.alert('位置情報の取得に失敗しました。エラーコード：')
-      }
-    )
-  }
+  // function getGeoLocation() {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (pos) => {
+  //       const lat = pos.coords.latitude //緯度を取得して定数latに代入
+  //       const lng = pos.coords.longitude //経度を取得して定数lngに代入
+  //       const accuracy = pos.coords.accuracy //同じく精度を定数accuracyに代入
+  //       console.log(lat, lng, accuracy)
+  //     },
+  //     () => {
+  //       window.alert('位置情報の取得に失敗しました。エラーコード：')
+  //     }
+  //   )
+  // }
 
   return (
     <MUI.Container className="app-content" maxWidth="md">
