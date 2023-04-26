@@ -30,23 +30,6 @@ export const useStyles = makeStyles((theme) => ({
       marginTop: '1.7rem',
     },
   },
-  facebook: {
-    background: '#1877f2',
-    marginBottom: '1rem',
-    color: '#fff',
-  },
-  twitter: {
-    background: '#1DA1F2',
-    marginBottom: '1rem',
-    color: '#fff',
-  },
-  github: {
-    background: '#24292e',
-    color: '#fff',
-  },
-  icon: {
-    marginRight: '0.5rem',
-  },
   forgotPassword: {
     fontSize: '14px',
   },

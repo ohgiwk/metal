@@ -3,14 +3,18 @@ import { useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 // prettier-ignore
 import { Link, Button, Card, CardContent, Container, TextField, Grid } from '@material-ui/core'
-import FacebookIcon from '@material-ui/icons/Facebook'
-import TwitterIcon from '@material-ui/icons/Twitter'
-import GitHubIcon from '@material-ui/icons/GitHub'
+
 import clsx from 'clsx'
 
 import { AppContext } from '../../contexts/AppContext'
 import useAuth from '../../hooks/useAuth'
 import { useStyles } from './style'
+import SNSLoginButton from '../../components/SNSLoginButton'
+
+/**
+ * ログイン画面
+ * @returns
+ */
 export default function Login() {
   const { login } = useAuth()
   const { isLoading } = useContext(AppContext)
@@ -35,7 +39,6 @@ export default function Login() {
   return <View {...props}></View>
 }
 
-
 interface ViewProps {
   isLoading: boolean
   username: string
@@ -47,6 +50,11 @@ interface ViewProps {
   onKeypressPassword: (event: KeyboardEvent<HTMLDivElement>) => void
 }
 
+/**
+ * ログイン画面のView
+ * @param props
+ * @returns
+ */
 const View: React.FC<ViewProps> = (props) => {
   const classes = useStyles()
   const { t } = useTranslation()
@@ -67,9 +75,7 @@ const View: React.FC<ViewProps> = (props) => {
                   onChange={({ target: { value } }) =>
                     props.onChangeUsername(value)
                   }
-                  InputProps={
-                    { className: 'username' }
-                  }
+                  InputProps={{ className: 'username' }}
                 />
                 <TextField
                   label={t('PASSWORD')}
@@ -81,9 +87,7 @@ const View: React.FC<ViewProps> = (props) => {
                     props.onChangePassword(value)
                   }
                   onKeyPress={props.onKeypressPassword}
-                  InputProps={
-                    { className: 'password' }
-                  }
+                  InputProps={{ className: 'password' }}
                 />
               </form>
               <div>
@@ -111,42 +115,9 @@ const View: React.FC<ViewProps> = (props) => {
             </Grid>
 
             <Grid item xs={12} md={5} className={classes.sns}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                onClick={props.onClickLoginButton}
-                disabled={props.isLoading}
-                className={classes.facebook}
-              >
-                <FacebookIcon className={classes.icon} />
-                Facebook でログイン
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                onClick={props.onClickLoginButton}
-                disabled={props.isLoading}
-                className={classes.twitter}
-              >
-                <TwitterIcon className={classes.icon} />
-                Twitter でログイン
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                onClick={props.onClickLoginButton}
-                disabled={props.isLoading}
-                className={classes.github}
-              >
-                <GitHubIcon className={classes.icon} />
-                Github でログイン
-              </Button>
+              <SNSLoginButton sns="facebook" isLoading={props.isLoading} />
+              <SNSLoginButton sns="twitter" isLoading={props.isLoading} />
+              <SNSLoginButton sns="github" isLoading={props.isLoading} />
             </Grid>
           </Grid>
         </CardContent>
