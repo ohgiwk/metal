@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as MUI from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import moment from 'moment'
 
@@ -11,38 +10,7 @@ import useAPI from '../../hooks/useAPI'
 import PasswordGenerator from '../PasswordGenerator'
 import { SettingContext } from '../../contexts/SettingContext'
 
-const useStyles = makeStyles((theme) => ({
-  dialogTitle: { paddingBottom: '0' },
-  half: { margin: ' 0 1rem 1rem 0', width: '95%' },
-  textField: { marginBottom: '1rem', width: '100%' },
-  password: { width: '100%' },
-  generator: { marginBottom: '1rem' },
-  formControl: { margin: theme.spacing(1), minWidth: 120 },
-  date: {
-    fontSize: '12px',
-    color: 'gray',
-    textAlign: 'right',
-    marginBottom: '0.5rem',
-  },
-  expired: { textAlign: 'right' },
-  warning: { verticalAlign: 'middle' },
-  warningIcon: { verticalAlign: 'middle', margin: '0 5px 3px 0' },
-  passwordLevel_high: {
-    '& > .MuiLinearProgress-bar': {
-      background: '#ff0000',
-    },
-  },
-  passwordLevel_middle: {
-    '& > .MuiLinearProgress-bar': {
-      background: '#ffff00',
-    },
-  },
-  passwordLevel_row: {
-    '& > .MuiLinearProgress-bar': {
-      background: '#0000ff',
-    },
-  },
-}))
+import { useStyles } from './style'
 
 interface State {
   title: string
@@ -207,6 +175,7 @@ export default function EntryDialog() {
             />
           </div>
         </div>
+
         <MUI.TextField
           label={t('NOTE')}
           multiline
@@ -217,12 +186,14 @@ export default function EntryDialog() {
           }
           className={classes.textField}
         ></MUI.TextField>
+
         <MUI.TextField
           label={t('URL')}
           value={state.url}
           onChange={({ target: { value: url } }) => setState({ ...state, url })}
           className={classes.textField}
         ></MUI.TextField>
+
         <div>
           <MUI.FormControl className={classes.formControl}>
             <MUI.InputLabel>{t('GROUP')}</MUI.InputLabel>
