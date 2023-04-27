@@ -1,7 +1,17 @@
 import { useContext, useEffect, useState, lazy, Suspense } from 'react'
-import { BrowserRouter, Switch, Route, Redirect, RouteProps } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Redirect,
+  RouteProps,
+} from 'react-router-dom'
 import { Backdrop, CircularProgress, CssBaseline } from '@material-ui/core'
-import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core/styles'
+import {
+  createTheme,
+  ThemeProvider,
+  makeStyles,
+} from '@material-ui/core/styles'
 
 import DrawerMenu from '../components/DrawerMenu'
 import AppHeader from '../components/AppHeader'
@@ -24,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
   backdrop: { zIndex: theme.zIndex.modal + 1, flexDirection: 'column' },
 }))
 
+/**
+ * ログインしていない場合はログイン画面にリダイレクトするルート
+ * @param props
+ * @returns
+ */
 const PrivateRoute = (props: RouteProps) => {
   const { isAuth } = useContext(AppContext)
   return isAuth ? <Route {...props} /> : <Redirect to="/login" />
@@ -39,7 +54,7 @@ export function Default() {
 
   useEffect(() => initAuth(), [initAuth])
 
-  const muiTheme = createMuiTheme({
+  const muiTheme = createTheme({
     palette: {
       type: theme,
       primary: { main: theme === 'dark' ? '#4dd0e1' : '#e91e63' },
@@ -79,7 +94,9 @@ export function Default() {
                     render={() => (isAuth ? <Redirect to="/" /> : <Login />)}
                   />
                   <Route exact path="/signUp" children={<SignUp />} />
-                  <PrivateRoute exact path="/" children={<Home />} />
+
+                  <Route exact path="/" children={<Home />} />
+
                   <PrivateRoute exact path="/setting" children={<Setting />} />
                 </Switch>
               </Suspense>

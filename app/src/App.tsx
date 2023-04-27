@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Default } from './pages/Default'
 import { AppContextProvider } from './contexts/AppContext'
 import { ListContextProvider } from './contexts/ListContext'
