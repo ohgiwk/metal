@@ -1,29 +1,12 @@
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 // prettier-ignore
 import { Button, Card, CardContent, Container, TextField, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-// import firebase from 'firebase'
+import { useStyles } from './style'
 
 import { AppContext } from '../../contexts/AppContext'
 import useAuth from '../../hooks/useAuth'
-
-const useStyles = makeStyles(() => ({
-  login: { fontFamily: "'Lora', serif" },
-  content: { textAlign: 'center' },
-  textField: { width: '90%', margin: '0 0 1rem' },
-  button: { marginTop: '1rem' },
-  or: { fontSize: '14px', color: 'gray', marginTop: '1rem' },
-  container: {
-    minHeight: '100vh',
-    display: 'flex !important',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    fontSize: 'calc(10px + 2vmin)',
-    color: 'white',
-  },
-}))
 
 export default function SignUp() {
   const classes = useStyles()
