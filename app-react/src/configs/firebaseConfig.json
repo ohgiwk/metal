@@ -1,9 +1,8 @@
 {
-    "apiKey": "AIzaSyAb9Grxu6L91oHl0dxuBkN_74thN-Fdxc8",
-    "authDomain": "metal-12afc.firebaseapp.com",
-    "databaseURL": "https://metal-12afc.firebaseio.com",
-    "projectId": "metal-12afc",
-    "storageBucket": "metal-12afc.appspot.com",
-    "messagingSenderId": "405485164870",
-    "appId": "1:405485164870:web:0416de53ecb15ddedc2d47"
-  }
+  "apiKey": "AIzaSyBk6J2GZnp6Z9RcDqeoFjQf6K7qOrkBiFQ",
+  "authDomain": "metal-363907.firebaseapp.com",
+  "projectId": "metal-363907",
+  "storageBucket": "metal-363907.appspot.com",
+  "messagingSenderId": "490119410453",
+  "appId": "1:490119410453:web:adbe007dec346fd9a0ef1c"
+}

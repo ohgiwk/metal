@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 // prettier-ignore
 import { FormControl, IconButton, Input, InputLabel, InputAdornment } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'

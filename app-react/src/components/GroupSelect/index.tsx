@@ -25,9 +25,9 @@ const GroupSelect: React.FC<{}> = () => {
         >
           <MUI.MenuItem value={-1}>ALL</MUI.MenuItem>
 
-          {groups.map((g, i) => (
+          {groups.map((group, i) => (
             <MUI.MenuItem key={i} value={i}>
-              {g.name}
+              {group}
             </MUI.MenuItem>
           ))}
         </MUI.Select>

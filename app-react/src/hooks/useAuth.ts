@@ -6,6 +6,11 @@ import { useHistory } from 'react-router-dom'
 
 import { AppContext } from '../contexts/AppContext'
 
+/**
+ * 認証に関する処理を行うカスタムフック
+ *
+ * @return {*}
+ */
 const useAuth = () => {
   const history = useHistory()
   const { t } = useTranslation()
@@ -28,7 +33,7 @@ const useAuth = () => {
   }
 
   /**
-   *
+   * サインアップを行う
    * @param email
    * @param password
    */
@@ -71,7 +76,7 @@ const useAuth = () => {
       // ローディング非表示
       setIsLoading(false)
       // ホームに遷移
-      history.replace('/')
+      history.replace('/login')
     } catch (e) {
       setIsLoading(false)
       // ログイン失敗ダイアログ表示

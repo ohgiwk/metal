@@ -3,7 +3,6 @@ import { Entry, Group } from '../common/Types'
 
 interface State {
   groups: Group[]
-  setGroups: React.Dispatch<React.SetStateAction<Group[]>>
   entries: Entry[]
   setEntries: React.Dispatch<React.SetStateAction<Entry[]>>
   selectedGroup: Group | undefined
@@ -12,26 +11,25 @@ interface State {
   setSelectedEntry: React.Dispatch<React.SetStateAction<Entry | undefined>>
   entryDialog: boolean
   setEntryDialog: React.Dispatch<React.SetStateAction<boolean>>
-
-  groupDialog: boolean
-  setGroupDialog: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ListContext = createContext<State>({} as State)
 
 function ListContextProvider(props: { children?: React.ReactNode }) {
-  const [groups, setGroups] = useState<Group[]>([])
   const [entries, setEntries] = useState<Entry[]>([])
   const [selectedGroup, setSelectedGroup] = useState<Group | undefined>()
   const [selectedEntry, setSelectedEntry] = useState<Entry | undefined>()
   const [entryDialog, setEntryDialog] = useState(false)
-  const [groupDialog, setGroupDialog] = useState(false)
 
   return (
     <ListContext.Provider
       value={{
-        groups,
-        setGroups,
+        get groups(): Group[] {
+          return this.entries
+            .map((e) => e.group)
+            .filter((g) => g)
+            .filter((g, i, self) => self.indexOf(g) === i)
+        },
         entries,
         setEntries,
         selectedGroup,
@@ -40,8 +38,6 @@ function ListContextProvider(props: { children?: React.ReactNode }) {
         setSelectedEntry,
         entryDialog,
         setEntryDialog,
-        groupDialog,
-        setGroupDialog,
       }}
     >
       {props.children}

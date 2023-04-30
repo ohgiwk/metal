@@ -1,12 +1,11 @@
 import { useContext } from 'react'
-import { useTranslation } from 'react-i18next'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import CryptoJS from 'crypto-js'
+import { v4 as uuidv4 } from 'uuid'
 
-import { Entry, Group } from '../common/Types'
-import { AppContext } from '../contexts/AppContext'
-import { ListContext } from '../contexts/ListContext'
+import { Entry } from '../common/Types'
+import { AppContext, ListContext } from '../contexts'
 
 type State = {
   title: string
@@ -17,174 +16,116 @@ type State = {
   group: string
 }
 
+const masterPassword = 'master'
+
+// 暗号化
+function encrypt(value: string, masterPassword: string) {
+  return CryptoJS.AES.encrypt(value, masterPassword).toString()
+}
+
+// 復号化
+function decrypt(value: string, masterPassword: string) {
+  return CryptoJS.AES.decrypt(value, masterPassword).toString(CryptoJS.enc.Utf8)
+}
+
 const useAPI = () => {
-  const { t } = useTranslation()
-  const { currentUser, setSnackBar, setIsLoading } = useContext(AppContext)
-  const { entries, setEntries, groups, setGroups } = useContext(ListContext)
+  const { currentUser, setIsLoading } = useContext(AppContext)
+  const { entries, setEntries } = useContext(ListContext)
   const db = firebase.firestore()
 
-  const masterPassword = 'master'
-
-  function encrypt(password: string) {
-    return CryptoJS.AES.encrypt(password, masterPassword).toString()
-  }
-
-  function decrypt(password: string) {
-    return CryptoJS.AES.decrypt(password, masterPassword).toString(
-      CryptoJS.enc.Utf8
-    )
-  }
-
+  /**
+   * エントリー取得
+   */
   async function fetchEntries() {
     const doc = db.collection('passwords').doc(currentUser?.uid)
-    const { docs: _entries } = await doc.collection('entries').get()
+    const { docs } = await doc.collection('entries').get()
 
-    const entries = _entries
-      .map((d) => ({ id: d.id, ...d.data() } as Entry))
-      .map((e) => ({ ...e, password: decrypt(e.password) }))
+    if (docs[0]) {
+      setEntries(
+        // JSON.parse(docs[0].data()['value']) as Entry[]
+        JSON.parse(decrypt(docs[0].data()['value'], masterPassword)) as Entry[]
+      )
+    }
+  }
 
-    setEntries(entries)
+  /**
+   * エントリー保存
+   */
+  async function saveEntries(entries: Entry[]) {
+    setIsLoading(true)
+
+    // const value = { value: JSON.stringify(entries) }
+    const value = { value: encrypt(JSON.stringify(entries), masterPassword) }
+
+    const userDocRef = db.collection('passwords').doc(currentUser?.uid)
+    const entryColRef = userDocRef.collection('entries')
+    const { docs } = await entryColRef.get()
+
+    if (!docs[0]) {
+      await entryColRef.doc().set(value)
+    } else {
+      await entryColRef.doc(docs[0].id).update(value)
+    }
+
+    setIsLoading(false)
   }
 
   /**
    * エントリー作成
+   * @param state
    */
-  async function createEntry(state: State) {
-    setIsLoading(true)
+  function createEntry(state: State): Entry[] {
     const now = new Date().getTime()
-    const { password } = state
+    const entry = { id: uuidv4(), ...state, createdAt: now, updatedAt: now }
+    const newEntries = [...entries, entry]
 
-    const entry = {
-      ...state,
-      password: encrypt(password),
-      createdAt: now,
-      updatedAt: now,
-    }
-
-    let doc = db.collection('passwords').doc(currentUser?.uid)
-
-    if (!(await doc.get()).exists) {
-      await doc.set({})
-    }
-
-    doc = await doc.collection('entries').add(entry)
-
-    setIsLoading(false)
-
-    setEntries([...entries, { id: doc.id, ...entry, password }])
-    setSnackBar({ open: true, type: 'success', message: t('CREATED') })
+    setEntries(newEntries)
+    return newEntries
   }
 
   /**
    * エントリー更新
+   * @param target
+   * @param state
    */
-  async function updateEntry(target: Entry, state: State) {
-    setIsLoading(true)
-
+  function updateEntry(target: Entry, state: State): Entry[] {
     const targetEntry = {
       ...target,
       ...state,
-      password: encrypt(state.password),
       updatedAt: new Date().getTime(),
     }
 
-    await db
-      .collection('passwords')
-      .doc(currentUser?.uid)
-      .collection('entries')
-      .doc(targetEntry?.id)
-      .update(targetEntry)
-
-    setIsLoading(false)
-
-    targetEntry.password = state.password
-    setEntries([
-      ...entries.map((e) => (e.id === targetEntry?.id ? targetEntry : e)),
-    ])
-    setSnackBar({ open: true, type: 'success', message: t('UPDATED') })
-  }
-
-  async function deleteEntry(entry: Entry) {
-    setIsLoading(true)
-
-    await db
-      .collection('passwords')
-      .doc(currentUser?.uid)
-      .collection('entries')
-      .doc(entry.id)
-      .delete()
-
-    setIsLoading(false)
-
-    setEntries([...entries.filter((e) => e.id !== entry.id)])
-    setSnackBar({ open: true, type: 'success', message: t('DELETED') })
-  }
-
-  async function fetchGroups() {
-    const doc = db.collection('passwords').doc(currentUser?.uid)
-    const { docs: _groups } = await doc.collection('groups').get()
-    const groups = _groups.map((d) => ({ id: d.id, ...d.data() } as Group))
-    setGroups(groups)
+    const newEntries = [
+      ...entries.map((e) => (e.id === targetEntry.id ? targetEntry : e)),
+    ]
+    setEntries(newEntries)
+    return newEntries
   }
 
   /**
+   * エントリー削除
    *
+   * @param {Entry} entry
    */
-  async function createGroup(name: string) {
-    setIsLoading(true)
-
-    const now = new Date().getTime()
-    const group = { name, createdAt: now, updatedAt: now }
-
-    let doc = db.collection('passwords').doc(currentUser?.uid)
-
-    if (!(await doc.get()).exists) {
-      await doc.set({})
-    }
-
-    doc = await doc.collection('groups').add(group)
-
-    setIsLoading(false)
-
-    setGroups([...groups, { id: doc.id, ...group }])
-    setSnackBar({ open: true, type: 'success', message: t('CREATED') })
-  }
-
-  /**
-   *
-   */
-  async function updateGroup(group: Group, name: string) {
-    setIsLoading(true)
-
-    const targetGroup = {
-      ...group,
-      name,
-      updatedAt: new Date().getTime(),
-    }
-
-    await db
-      .collection('passwords')
-      .doc(currentUser?.uid)
-      .collection('groups')
-      .doc(targetGroup?.id)
-      .update(targetGroup)
-
-    setIsLoading(false)
-
-    setGroups([
-      ...groups.map((e) => (e.id === targetGroup?.id ? targetGroup : e)),
-    ])
-    setSnackBar({ open: true, type: 'success', message: t('UPDATED') })
+  function deleteEntry(entry: Entry) {
+    // setIsLoading(true)
+    // await db
+    //   .collection('passwords')
+    //   .doc(currentUser?.uid)
+    //   .collection('entries')
+    //   .doc(entry.id)
+    //   .delete()
+    // setIsLoading(false)
+    // setEntries([...entries.filter((e) => e.id !== entry.id)])
+    // setSnackBar({ open: true, type: 'success', message: t('DELETED') })
   }
 
   return {
     fetchEntries,
+    saveEntries,
     createEntry,
     updateEntry,
     deleteEntry,
-    fetchGroups,
-    createGroup,
-    updateGroup,
   }
 }
 

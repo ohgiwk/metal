@@ -15,15 +15,11 @@ import FolderSpecialIcon from '@material-ui/icons/FolderSpecial'
 import OptionMenu from '../OptionMenu'
 import { ListContext } from '../../contexts/ListContext'
 
-const GroupList: React.FC<{}> = () => {
+const GroupList: React.FC = () => {
   const { t } = useTranslation()
 
-  const {
-    groups,
-    setSelectedEntry,
-    selectedGroup,
-    setSelectedGroup,
-  } = useContext(ListContext)
+  const { groups, setSelectedEntry, selectedGroup, setSelectedGroup } =
+    useContext(ListContext)
 
   return (
     <List dense subheader={<ListSubheader>{t('HOME.GROUPS')}</ListSubheader>}>
@@ -39,11 +35,12 @@ const GroupList: React.FC<{}> = () => {
         </ListItemIcon>
         <ListItemText primary="ALL" />
       </ListItem>
+
       {groups.map((group, i) => (
         <React.Fragment key={i}>
           <ListItem
             button
-            selected={selectedGroup?.id === group.id}
+            selected={selectedGroup === group}
             onClick={() => {
               setSelectedGroup(group)
               setSelectedEntry(undefined)
@@ -52,9 +49,9 @@ const GroupList: React.FC<{}> = () => {
             <ListItemIcon>
               <FolderIcon />
             </ListItemIcon>
-            <ListItemText primary={group.name} />
+            <ListItemText primary={group} />
 
-            {selectedGroup?.id === group.id && (
+            {selectedGroup === group && (
               <ListItemSecondaryAction>
                 <OptionMenu
                   iconSize="small"
@@ -62,7 +59,9 @@ const GroupList: React.FC<{}> = () => {
                     {
                       label: 'Delete Group',
                       Icon: <DeleteIcon />,
-                      onClick: () => {},
+                      onClick: () => {
+                        console.log('delete group')
+                      },
                     },
                   ]}
                 />

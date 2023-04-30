@@ -1,26 +1,19 @@
 import { useContext, useEffect, useState, lazy, Suspense } from 'react'
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-  RouteProps,
-} from 'react-router-dom'
+// prettier-ignore
+import { BrowserRouter, Switch, Route, Redirect, RouteProps, } from 'react-router-dom'
 import { Backdrop, CircularProgress, CssBaseline } from '@material-ui/core'
-import {
-  createTheme,
-  ThemeProvider,
-  makeStyles,
-} from '@material-ui/core/styles'
+// prettier-ignore
+import { createTheme, ThemeProvider, makeStyles, } from '@material-ui/core/styles'
 
-import DrawerMenu from '../components/DrawerMenu'
-import AppHeader from '../components/AppHeader'
-import AppFooter from '../components/AppFooter'
-import InfoDialog from '../components/InfoDialog'
-import SnackBar from '../components/SnackBar'
-import ConfirmDialog from '../components/ConfirmDialog'
-import { AppContext } from '../contexts/AppContext'
-import { SettingContext } from '../contexts/SettingContext'
+import {
+  DrawerMenu,
+  AppHeader,
+  AppFooter,
+  InfoDialog,
+  SnackBar,
+  ConfirmDialog,
+} from '../components'
+import { AppContext, SettingContext } from '../contexts'
 import useAuth from '../hooks/useAuth'
 
 import AppLoading from './AppLoading'
@@ -48,8 +41,14 @@ export function Default() {
   const classes = useStyles()
   const { initAuth } = useAuth()
   const [drawer, setDrawer] = useState(false)
-  // prettier-ignore
-  const { isAuth, isAppLoading, isLoading, snackBar, setSnackBar, confirmDialog } = useContext(AppContext)
+  const {
+    isAuth,
+    isAppLoading,
+    isLoading,
+    snackBar,
+    setSnackBar,
+    confirmDialog,
+  } = useContext(AppContext)
   const { theme } = useContext(SettingContext)
 
   useEffect(() => initAuth(), [initAuth])
@@ -72,6 +71,7 @@ export function Default() {
             <BrowserRouter>
               <Suspense fallback={<AppLoading />}>
                 <DrawerMenu open={drawer} setOpen={setDrawer} />
+                {/* ヘッダ */}
                 <AppHeader openDrawer={setDrawer} />
                 <InfoDialog />
 
@@ -89,17 +89,21 @@ export function Default() {
                 </Backdrop>
 
                 <Switch>
+                  {/* ログイン画面 */}
                   <Route
                     path="/login"
                     render={() => (isAuth ? <Redirect to="/" /> : <Login />)}
                   />
+                  {/* サインアップ画面 */}
                   <Route exact path="/signUp" children={<SignUp />} />
-
-                  <Route exact path="/" children={<Home />} />
-
+                  {/* ホーム画面 */}
+                  <PrivateRoute exact path="/" children={<Home />} />
+                  {/* 設定画面 */}
                   <PrivateRoute exact path="/setting" children={<Setting />} />
                 </Switch>
               </Suspense>
+
+              {/* フッター */}
               <AppFooter />
             </BrowserRouter>
           )

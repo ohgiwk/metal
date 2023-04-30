@@ -1,16 +1,28 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import * as MUI from '@material-ui/core'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+  LinearProgress,
+  TextField,
+  Typography,
+} from '@material-ui/core'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import dayjs from 'dayjs'
 
-import PasswordInput from '../PasswordInput'
-import { ListContext } from '../../contexts/ListContext'
+import { PasswordInput, PasswordGenerator } from '..'
+
+import { Entry, Group } from '../../common/Types'
+import { AppContext, ListContext, SettingContext } from '../../contexts'
 import useAPI from '../../hooks/useAPI'
-import PasswordGenerator from '../PasswordGenerator'
-import { SettingContext } from '../../contexts/SettingContext'
 
 import { useStyles } from './style'
+import { Autocomplete } from '@material-ui/lab'
 
 interface State {
   title: string
@@ -20,51 +32,67 @@ interface State {
   url: string
   group: string
 }
+// エントリ初期値
+const initialState = {
+  title: '',
+  username: '',
+  password: '',
+  note: '',
+  group: '',
+  url: '',
+}
 
 export default function EntryDialog() {
-  const classes = useStyles()
   const { t } = useTranslation()
-
+  const { setSnackBar, setIsLoading } = useContext(AppContext)
   const { groups, selectedEntry } = useContext(ListContext)
   const { entryDialog: open, setEntryDialog: setOpen } = useContext(ListContext)
   const { daysToExpire } = useContext(SettingContext)
-  const { createEntry, updateEntry } = useAPI()
+  const { createEntry, updateEntry, saveEntries } = useAPI()
 
+  // ダイアログの表示状態
+  const [state, setState] = useState<State>(initialState)
+  // パスワード強度
   const [passwordLevel, setPasswordLevel] = useState(0)
 
-  const initialState = useMemo(
-    () => ({
-      title: '',
-      username: '',
-      password: '',
-      note: '',
-      group: '',
-      url: '',
-    }),
-    []
-  )
-  const [state, setState] = useState<State>(initialState)
+  // パスワードが有効期限切れかどうか
+  const isExpired = selectedEntry
+    ? dayjs().isAfter(dayjs(selectedEntry.updatedAt).add(daysToExpire, 'days'))
+    : false
 
   useEffect(() => {
+    // 選択されたエントリがあれば、編集中のエントリとしてセットする
     if (selectedEntry) {
       setState(selectedEntry as State)
       checkPasswordLevel(selectedEntry.password)
     } else {
       setState(initialState)
     }
-  }, [initialState, setState, selectedEntry])
+  }, [setState, selectedEntry])
 
-  const create = () => {
-    createEntry(state)
-    setState(initialState)
+  /**
+   * 保存ボタン押下時の処理
+   */
+  const onClickSave = async () => {
+    setIsLoading(true)
+
+    // エントリ選択時は更新、新規作成時は作成
+    await saveEntries(
+      selectedEntry ? updateEntry(selectedEntry, state) : createEntry(state)
+    )
+
+    setSnackBar({ open: true, type: 'success', message: t('CREATED') })
+    setIsLoading(false)
     setOpen(false)
+    // 次回ダイアログ表示時にリセットされるようにする
+    setState(initialState)
   }
 
-  const update = () => {
-    if (selectedEntry) {
-      updateEntry(selectedEntry, state)
-      setOpen(false)
-    }
+  // 保存せずに閉じたとき、編集中のエントリをリセットする
+  const onCancel = () => {
+    // リセット
+    setState((selectedEntry as State) ?? initialState)
+    setOpen(false)
   }
 
   const checkPasswordLevel = (password: string) => {
@@ -72,6 +100,51 @@ export default function EntryDialog() {
     level = level > 100 ? 100 : level
     setPasswordLevel(level)
   }
+
+  return (
+    <View
+      {...{
+        state,
+        setState,
+        open,
+        groups,
+        selectedEntry,
+        onCancel,
+        passwordLevel,
+        isExpired,
+        onClickSave,
+      }}
+    />
+  )
+}
+
+interface Props {
+  state: State
+  setState: React.Dispatch<React.SetStateAction<State>>
+  open: boolean
+  groups: Group[]
+  selectedEntry: Entry | undefined
+  passwordLevel: number
+  isExpired: boolean
+  onClickSave: () => void
+  onCancel: () => void
+}
+
+// ダイアログの表示部分
+const View: React.FC<Props> = ({
+  state,
+  setState,
+  groups,
+  selectedEntry,
+  open,
+  passwordLevel,
+  isExpired,
+  onClickSave,
+  onCancel,
+}) => {
+  const classes = useStyles()
+  const { t } = useTranslation()
+
   const getPassLevelState = (level: number) => {
     if (level > 50) {
       return { className: classes.passwordLevel_high, text: '強' }
@@ -82,22 +155,12 @@ export default function EntryDialog() {
     }
   }
 
-  const onCancel = () => {
-    // リセット
-    setState((selectedEntry as State) ?? initialState)
-    setOpen(false)
-  }
-
-  const isExpired = selectedEntry
-    ? dayjs().isAfter(dayjs(selectedEntry.updatedAt).add(daysToExpire, 'days'))
-    : false
-
   return (
-    <MUI.Dialog open={open} onClose={onCancel} fullWidth>
-      <MUI.DialogTitle className={classes.dialogTitle}>
+    <Dialog open={open} onClose={onCancel} fullWidth>
+      <DialogTitle className={classes.dialogTitle}>
         {t('CREATE_ENTRY')}
-      </MUI.DialogTitle>
-      <MUI.DialogContent>
+      </DialogTitle>
+      <DialogContent>
         {selectedEntry && (
           <div className={classes.date}>
             CREATED: {dayjs(selectedEntry?.createdAt).format('YYYY/MM/DD')}
@@ -105,16 +168,16 @@ export default function EntryDialog() {
         )}
 
         {isExpired && (
-          <MUI.Typography className={classes.expired} color="error">
+          <Typography className={classes.expired} color="error">
             <ErrorOutlineIcon
               className={classes.warningIcon}
               fontSize="small"
             />
             <span className={classes.warning}>Password Expired</span>
-          </MUI.Typography>
+          </Typography>
         )}
 
-        <MUI.TextField
+        <TextField
           label={t('TITLE')}
           value={state.title}
           onChange={({ target: { value: title } }) =>
@@ -124,21 +187,22 @@ export default function EntryDialog() {
           fullWidth
           autoFocus
           margin="dense"
-        ></MUI.TextField>
+        ></TextField>
+
         <div>
-          <MUI.Grid container>
-            <MUI.Grid item xs={6}>
-              <MUI.TextField
+          <Grid container>
+            <Grid item xs={6}>
+              <TextField
                 label={t('USERNAME')}
                 value={state.username}
                 onChange={({ target: { value: username } }) =>
                   setState({ ...state, username })
                 }
                 className={classes.half}
-              ></MUI.TextField>
-            </MUI.Grid>
+              ></TextField>
+            </Grid>
 
-            <MUI.Grid item xs={6}>
+            <Grid item xs={6}>
               <div className={classes.half}>
                 <PasswordInput
                   className={classes.password}
@@ -146,14 +210,15 @@ export default function EntryDialog() {
                   value={state.password}
                   onChange={({ target: { value: password } }) => {
                     setState({ ...state, password })
-                    checkPasswordLevel(password)
+                    // checkPasswordLevel(password)
                   }}
                 />
+
                 {(() => {
                   const { text, className } = getPassLevelState(passwordLevel)
                   return (
                     <>
-                      <MUI.LinearProgress
+                      <LinearProgress
                         variant="determinate"
                         value={passwordLevel}
                         className={className}
@@ -165,8 +230,8 @@ export default function EntryDialog() {
                   )
                 })()}
               </div>
-            </MUI.Grid>
-          </MUI.Grid>
+            </Grid>
+          </Grid>
           <div className={classes.generator}>
             <PasswordGenerator
               onSubmit={(password: string) => setState({ ...state, password })}
@@ -174,7 +239,7 @@ export default function EntryDialog() {
           </div>
         </div>
 
-        <MUI.TextField
+        <TextField
           label={t('NOTE')}
           multiline
           rows={3}
@@ -183,45 +248,57 @@ export default function EntryDialog() {
             setState({ ...state, note })
           }
           className={classes.textField}
-        ></MUI.TextField>
+        ></TextField>
 
-        <MUI.TextField
+        <TextField
           label={t('URL')}
           value={state.url}
           onChange={({ target: { value: url } }) => setState({ ...state, url })}
           className={classes.textField}
-        ></MUI.TextField>
+        ></TextField>
 
         <div>
-          <MUI.FormControl className={classes.formControl}>
-            <MUI.InputLabel>{t('GROUP')}</MUI.InputLabel>
-            <MUI.Select
+          <FormControl className={classes.formControl}>
+            <Autocomplete
+              freeSolo
+              value={state.group}
+              options={groups}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  onChange={({ target: { value: group } }) => {
+                    console.log(group)
+                    setState({ ...state, group: group as string })
+                  }}
+                  label={t('GROUP')}
+                />
+              )}
+            />
+            {/* <Select
               value={state.group}
               onChange={({ target: { value: group } }) => {
                 setState({ ...state, group: group as string })
               }}
             >
               {groups.map((g, i) => (
-                <MUI.MenuItem key={i} value={g.id}>
+                <MenuItem key={i} value={g.id}>
                   {g.name}
-                </MUI.MenuItem>
+                </MenuItem>
               ))}
-            </MUI.Select>
-          </MUI.FormControl>
+            </Select> */}
+          </FormControl>
         </div>
-      </MUI.DialogContent>
-      <MUI.DialogActions>
-        <MUI.Button onClick={onCancel} color="default">
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onCancel} color="default">
           {t('CANCEL')}
-        </MUI.Button>
-        <MUI.Button
-          onClick={selectedEntry ? update : create}
-          color="primary"
-          variant="contained"
-        >
+        </Button>
+
+        <Button onClick={onClickSave} color="primary" variant="contained">
           {selectedEntry ? t('SAVE') : t('CREATE_NEW')}
-        </MUI.Button>
-      </MUI.DialogActions>
-    </MUI.Dialog>
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
